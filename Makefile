@@ -1,0 +1,26 @@
+
+TARGET = Janela_jogo
+
+SRCS = main.cpp window.cpp 
+
+CC = gcc 
+CFLAGS = -Wall 
+
+#pesquisar depois quais as flags para SO 
+
+LINUX_LIBS = -lglut -lGL -lGLU -lm
+#essas libs foram sugeridas por IA , não sei se estão certa 
+MACOS_LIBS = -framework GLUT -framework OpenGL
+MINGW_LIBS = -lfreeglut -lglew32 -lglu32 -lopengl32 -lwinmm -lgdi32
+
+#Modifique essa função com base no seu sistema 
+LIBS = $(LINUX_LIBS)
+
+all: $(TARGET)
+
+$(TARGET): $(SRCS)
+	$(CC) $(SRCS) $(CFLAGS) $(LIBS) -o $(TARGET)
+
+# Regra de limpeza: Remove os arquivos gerados (executável)
+clean:
+	rm -f $(TARGET)
