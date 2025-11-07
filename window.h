@@ -15,11 +15,14 @@
 #define ESC 27
 
 //Declarações das funções da janela 
-
 void init_opengl(void);
 void init_window(int argc, char** argv);
 void keyboard(unsigned char key, int x, int y);
 void display(void);
 void reshape_win(int w, int h);
+
+//declaração das funçoes de janela relaciada a logica do jogo 
+void update_game(void);
+void draw_game(void);
 
 #endif

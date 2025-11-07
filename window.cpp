@@ -1,4 +1,5 @@
 #include "window.h"
+#include "game.h"
 #include <GL/freeglut_std.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
@@ -24,6 +25,7 @@ void init_window(int argc, char** argv){
     glutDisplayFunc(display);
     glutReshapeFunc(reshape_win);
     glutKeyboardFunc(keyboard);
+    glutIdleFunc(update_game);
 
 }
 void keyboard(unsigned char key, int x, int y){
@@ -38,10 +40,11 @@ void display(void){
     glLoadIdentity();
     
     //LOGICA DO JOGO APLICADO AQUI 
+    draw_game();
     
-    glColor3f(1.0,0.0,0.0);
-    glutWireCube(1.0);
-
+    //glColor3f(1.0,0.0,0.0);
+    //glutWireCube(1.0);
+    
     glutSwapBuffers();
 }
 
@@ -51,10 +54,10 @@ void reshape_win(int w, int h){
     
     glViewport(0,0, (GLsizei) w, (GLsizei) h);
     //projecão perspectiva 
-    gluPerspective(60, (float)w/(float)h, 1.0, 9.0);
+    gluPerspective(60, (float)w/(float)h, 1.0, 20.0f);
     
     gluLookAt(0.0,0.0,7.0,//posição do olho
-              0.0,1.0,0.0, //direção da camera 
+              0.0,0.0,0.0, //direção da camera 
               0.0,1.0,0.0); // sentido da camera 
     glMatrixMode(GL_MODELVIEW);
 }

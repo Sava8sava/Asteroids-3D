@@ -1,7 +1,7 @@
 
 TARGET = Janela_jogo
 
-SRCS = main.cpp window.cpp 
+SRCS = main.cpp window.cpp game.cpp 
 
 CC = gcc 
 CFLAGS = -Wall 
