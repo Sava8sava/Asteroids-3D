@@ -25,6 +25,8 @@ void init_window(int argc, char** argv){
     glutDisplayFunc(display);
     glutReshapeFunc(reshape_win);
     glutKeyboardFunc(keyboard);
+    glutSpecialFunc(key_press);
+    glutSpecialUpFunc(key_release);
     glutIdleFunc(update_game);
 
 }
@@ -54,11 +56,52 @@ void reshape_win(int w, int h){
     
     glViewport(0,0, (GLsizei) w, (GLsizei) h);
     //projecão perspectiva 
-    gluPerspective(60, (float)w/(float)h, 1.0, 20.0f);
+    gluPerspective(60, (float)w/(float)h, 1.0, 10.0f);
     
-    gluLookAt(0.0,0.0,7.0,//posição do olho
+      gluLookAt(0.0,0.0,5.0,//posição do olho
               0.0,0.0,0.0, //direção da camera 
               0.0,1.0,0.0); // sentido da camera 
     glMatrixMode(GL_MODELVIEW);
 }
 
+void key_press(int key, int x, int y){
+    switch(key){
+      case GLUT_KEY_UP:
+            up = true;
+            break;
+        
+      case GLUT_KEY_DOWN:
+            down = true;
+            break;
+        
+      case GLUT_KEY_LEFT:
+            left = true;
+            break;
+        
+      case GLUT_KEY_RIGHT:
+            right = true;
+            break;
+        
+      }
+}
+
+void key_release(int key, int x, int y){
+    switch(key){
+      case GLUT_KEY_UP:
+            up = false;
+            break;
+        
+      case GLUT_KEY_DOWN:
+            down = false;
+            break;
+        
+      case GLUT_KEY_LEFT:
+            left = false;
+            break;
+        
+      case GLUT_KEY_RIGHT:
+            right = false;
+            break;
+        
+      }
+}
