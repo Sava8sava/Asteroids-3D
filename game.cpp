@@ -5,27 +5,35 @@
 #include <ios>
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
 
+#define ANGULAR_VEL 180.0f  
 
 //Global variables 
 typedef struct{
     float x,y,z;
     float rotation;
     float size;
-    float velocity;
+    float vx,vy;
+    float accel; 
+    float damping_rate;
 } Entity; 
 
 Entity player;
 
 //Movement variables
- bool up = 0;
- bool down = 0;
- bool left = 0;
- bool right = 0;
+bool up = 0;
+bool down = 0;
+bool left = 0;
+bool right = 0;
+bool rot_left = 0;
+bool rot_right = 0;
 
 //Fps variables 
 static int frame_count = 0;
 static float current_time = 0.0f;
+static float prev_delta = 0.0f;
+static float delta = 0.0f;
 static float previous_time = 0.0f;
 static float fps = 0.0f;
 
@@ -36,8 +44,11 @@ void init_game_objs(){
     player.z = 0.0f;
     player.rotation = 0.0f; 
     player.size = 0.3f; 
-    player.velocity = 0.05f;
-
+    player.vx = 0.0f;
+    player.vy = 0.0f;
+    player.accel = 10.0f; 
+    player.damping_rate = 0.95f;
+    
     //Fps 
     previous_time = glutGet(GLUT_ELAPSED_TIME);
 }
@@ -45,6 +56,7 @@ void init_game_objs(){
 //pequeno teste que move a nave pela janela 
 void update_game(void){
     
+    calculate_delta();
     move_player();
     fps_counter(); 
 
@@ -56,15 +68,20 @@ void draw_game(void){
   
   glPushMatrix();
       glTranslated(player.x,player.y,player.z);
-      glRotatef(90.0,1.0,0.0,0.0);
+      glRotatef(player.rotation,0.0,0.0,1.0);
+      glRotatef(90.0,-1.0,0.0,0.0);
       glColor3f(1.0,0.0,1.0);
-      glutWireCone(player.size,player.size * 2,10,10);
+      glutWireCube(player.size);
+      //glutWireCone(player.size,player.size * 2,10,10);
   glPopMatrix();
 
 }
 //o asteroids original tem movimentação de tanque 
 //por enquanto manteremos movimentação omnidirecional
 void move_player(){
+    float accel_amount = player.accel * delta;
+     
+     
     if(left && right) {
     //do nothing
     }
@@ -72,17 +89,35 @@ void move_player(){
     //do nothing
     }
     if (up) {
-      player.y += player.velocity;
+      player.vy += accel_amount;
     }
     if (down) {
-      player.y -= player.velocity;
+      player.vy -= accel_amount;
     }
     if (left) {
-      player.x -= player.velocity;
+      player.vx -= accel_amount;
     }
     if (right) {
-      player.x += player.velocity;
+      player.vx += accel_amount;
     }
+    if (rot_left){
+      player.rotation += ANGULAR_VEL * delta;
+    }
+    if(rot_right){
+      player.rotation -= ANGULAR_VEL * delta;
+    }
+    
+    player.vx *= player.damping_rate;
+    player.vy *= player.damping_rate;
+    
+    player.x += player.vx * delta;
+    player.y += player.vy * delta;
+
+    if (fabs(player.vx) < 0.001f) player.vx = 0.0f;
+    if (fabs(player.vy) < 0.001f) player.vy = 0.0f;
+    if (player.rotation > 360.0f) player.rotation -= 360.0f;
+    if (player.rotation < 0.0f) player.rotation += 360.0f;
+
    //TODO: corrigir o movimento diagonal mais rapido, pesquisar como normalizar  
 }
 
@@ -99,3 +134,10 @@ void fps_counter(){
     }
     
 }
+
+void calculate_delta(){
+    float curr_delta = glutGet(GLUT_ELAPSED_TIME);
+    delta = (curr_delta - prev_delta)/1000.0f; 
+    prev_delta = curr_delta;
+} 
+

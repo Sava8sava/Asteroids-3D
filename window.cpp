@@ -58,7 +58,7 @@ void reshape_win(int w, int h){
     //projecão perspectiva 
     gluPerspective(60, (float)w/(float)h, 1.0, 10.0f);
     
-      gluLookAt(0.0,0.0,5.0,//posição do olho
+        gluLookAt(0.0,0.0,9.0,//posição do olho
               0.0,0.0,0.0, //direção da camera 
               0.0,1.0,0.0); // sentido da camera 
     glMatrixMode(GL_MODELVIEW);
@@ -75,16 +75,26 @@ void key_press(int key, int x, int y){
             break;
         
       case GLUT_KEY_LEFT:
-            left = true;
+            rot_left = true;
             break;
         
       case GLUT_KEY_RIGHT:
-            right = true;
+            rot_right = true;
             break;
-        
+      
+      case 'q':
+      case 'Q':
+            rot_left = true;
+            break;
+
+      case 'w':
+      case 'W':
+            rot_right = true; 
+            break;
       }
 }
-
+//TODO: A rotação não esta funcionando pq a função esta usando teclas normais e não especiais 
+// no caso vou mudar isso quando adicionar a movimentação de tanque 
 void key_release(int key, int x, int y){
     switch(key){
       case GLUT_KEY_UP:
@@ -96,12 +106,21 @@ void key_release(int key, int x, int y){
             break;
         
       case GLUT_KEY_LEFT:
-            left = false;
+            rot_left = false;
             break;
         
       case GLUT_KEY_RIGHT:
-            right = false;
+            rot_right = false;
             break;
-        
+      
+      case 'q':
+      case 'Q':
+            rot_left = false;
+            break;
+
+      case 'w':
+      case 'W':
+            rot_right = false; 
+            break;
       }
 }
