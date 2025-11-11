@@ -1,0 +1,35 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Compilar OpenGL (MSYS2)",
+            "type": "shell",
+            "command": "C:/msys64/mingw64/bin/g++.exe",
+            "args": [
+                // Fontes
+                "C:/Users/luand/OneDrive/Documents/UFPI/2025.2/Computação Gráfica/Asteroids-3D/main.cpp",
+                "C:/Users/luand/OneDrive/Documents/UFPI/2025.2/Computação Gráfica/Asteroids-3D/window.cpp",
+                "C:/Users/luand/OneDrive/Documents/UFPI/2025.2/Computação Gráfica/Asteroids-3D/game.cpp",
+
+                // Saída
+                "-o",
+                "C:/Users/luand/OneDrive/Documents/UFPI/2025.2/Computação Gráfica/Asteroids-3D/output/main.exe",
+
+                // Warnings + bibliotecas
+                "-Wall",
+                "-lfreeglut",
+                "-lglew32",
+                "-lglu32",
+                "-lopengl32",
+                "-lwinmm",
+                "-lgdi32"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": ["$gcc"],
+            "detail": "Compila todos os .cpp do projeto Asteroids-3D com FreeGLUT e GLEW no MSYS2 MinGW64"
+        }
+    ]
+}

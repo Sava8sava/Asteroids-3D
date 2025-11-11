@@ -1,8 +1,8 @@
 #include "window.h"
 #include "game.h"
 #include <GL/freeglut_std.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
+#include <GL/glut.h>
+#include <GL/glut.h>
 #include <cstdlib>
 #include <stdio.h>
 #include <stdlib.h>
