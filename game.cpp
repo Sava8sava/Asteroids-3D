@@ -1,11 +1,13 @@
 #include "game.h"
 #include "window.h"
+#include "meteor.h"
 #include <GL/freeglut_std.h>
 #include <GL/gl.h>
 #include <ios>
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+#include <vector>
 
 #define ANGULAR_VEL 180.0f  
 
@@ -20,6 +22,8 @@ typedef struct{
 } Entity; 
 
 Entity player;
+//Lista global de meteoros
+std::vector<Meteor> meteors;
 
 //Movement variables
 bool up = 0;
@@ -57,6 +61,7 @@ void init_game_objs(){
 void update_game(void){
     
     calculate_delta();
+    updateMeteors(&meteors, delta);
     move_player();
     fps_counter(); 
 
@@ -65,14 +70,14 @@ void update_game(void){
 }
 
 void draw_game(void){
-  
+  drawMeteors(&meteors);
   glPushMatrix();
       glTranslated(player.x,player.y,player.z);
       glRotatef(player.rotation,0.0,0.0,1.0);
       glRotatef(90.0,-1.0,0.0,0.0);
       glColor3f(1.0,0.0,1.0);
-      glutWireCube(player.size);
-      //glutWireCone(player.size,player.size * 2,10,10);
+      //glutWireCube(player.size);
+      glutWireCone(player.size,player.size * 2,10,10);
   glPopMatrix();
 
 }
@@ -141,3 +146,7 @@ void calculate_delta(){
     prev_delta = curr_delta;
 } 
 
+void init_desenhoMeteoro(){
+  initMeteors(&meteors, 20);
+  return;
+}

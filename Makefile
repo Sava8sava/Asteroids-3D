@@ -1,9 +1,9 @@
 
 TARGET = Janela_jogo
 
-SRCS = main.cpp window.cpp game.cpp 
+SRCS = main.cpp window.cpp game.cpp meteor.cpp
 
-CC = gcc 
+CC = g++ 
 CFLAGS = -Wall 
 
 #pesquisar depois quais as flags para SO 

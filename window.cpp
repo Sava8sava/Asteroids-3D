@@ -21,6 +21,7 @@ void init_window(int argc, char** argv){
     glutCreateWindow("Asteroid 3D");
 
     init_opengl();
+    init_desenhoMeteoro();
     
     glutDisplayFunc(display);
     glutReshapeFunc(reshape_win);
@@ -40,7 +41,6 @@ void keyboard(unsigned char key, int x, int y){
 void display(void){
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
-    
     //LOGICA DO JOGO APLICADO AQUI 
     draw_game();
     
