@@ -2,12 +2,15 @@
 #include "window.h"
 #include <GL/freeglut_std.h>
 #include <GL/gl.h>
+#include <cmath>
 #include <ios>
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
 
 #define ANGULAR_VEL 180.0f  
+#define PI 3.1415926
+
 
 //Global variables 
 typedef struct{
@@ -71,34 +74,21 @@ void draw_game(void){
       glRotatef(player.rotation,0.0,0.0,1.0);
       glRotatef(90.0,-1.0,0.0,0.0);
       glColor3f(1.0,0.0,1.0);
-      glutWireCube(player.size);
-      //glutWireCone(player.size,player.size * 2,10,10);
+      draw_spaceship(player.size);
   glPopMatrix();
 
 }
-//o asteroids original tem movimentação de tanque 
-//por enquanto manteremos movimentação omnidirecional
+
 void move_player(){
     float accel_amount = player.accel * delta;
-     
-     
-    if(left && right) {
-    //do nothing
-    }
-    if(up && down) {
-    //do nothing
-    }
+    float rotation_rad = player.rotation *(PI/180.0f);
+
+    float frontal_dirx = -sinf(rotation_rad);
+    float frontal_diry = cosf(rotation_rad);
+
     if (up) {
-      player.vy += accel_amount;
-    }
-    if (down) {
-      player.vy -= accel_amount;
-    }
-    if (left) {
-      player.vx -= accel_amount;
-    }
-    if (right) {
-      player.vx += accel_amount;
+      player.vx += frontal_dirx * accel_amount;
+      player.vy += frontal_diry * accel_amount;
     }
     if (rot_left){
       player.rotation += ANGULAR_VEL * delta;
@@ -141,3 +131,32 @@ void calculate_delta(){
     prev_delta = curr_delta;
 } 
 
+void draw_spaceship(float size) {
+    float height = size * 2.0f;
+    float base_half = size / 2.0f;
+
+    float P[3] = {0.0f, 0.0f, height/2};     // Ponta
+    float A[3] = { base_half,  base_half, -height/2};
+    float B[3] = {-base_half,  base_half, -height/2};
+    float C[3] = {-base_half, -base_half, -height/2};
+    float D[3] = { base_half, -base_half, -height/2};
+    
+    glColor3f(1.0, 0.0, 1.0);
+
+    //BASE
+    glBegin(GL_LINE_LOOP);
+        glVertex3fv(A);
+        glVertex3fv(B);
+        glVertex3fv(C);
+        glVertex3fv(D);
+    glEnd();
+
+    // LATERAIS 
+    // Desenhar as arestas laterais
+    glBegin(GL_LINES);
+        glVertex3fv(P); glVertex3fv(A);
+        glVertex3fv(P); glVertex3fv(B);
+        glVertex3fv(P); glVertex3fv(C);
+        glVertex3fv(P); glVertex3fv(D);
+    glEnd();
+}
