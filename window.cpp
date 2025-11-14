@@ -1,8 +1,8 @@
 #include "window.h"
 #include "game.h"
 #include <GL/freeglut_std.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
+#include <GL/glut.h>
+#include <GL/glut.h>
 #include <cstdlib>
 #include <stdio.h>
 #include <stdlib.h>
@@ -21,6 +21,7 @@ void init_window(int argc, char** argv){
     glutCreateWindow("Asteroid 3D");
 
     init_opengl();
+    init_desenhoMeteoro();
     
     glutDisplayFunc(display);
     glutReshapeFunc(reshape_win);
@@ -40,10 +41,9 @@ void keyboard(unsigned char key, int x, int y){
 void display(void){
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
-    
     //LOGICA DO JOGO APLICADO AQUI 
     draw_game();
-    
+
     //glColor3f(1.0,0.0,0.0);
     //glutWireCube(1.0);
     
@@ -56,7 +56,7 @@ void reshape_win(int w, int h){
     
     glViewport(0,0, (GLsizei) w, (GLsizei) h);
     //projecão perspectiva 
-    gluPerspective(60, (float)w/(float)h, 1.0, 10.0f);
+    gluPerspective(60, (float)w/(float)h, 1.0, 100.0f);
     
         gluLookAt(0.0,0.0,9.0,//posição do olho
               0.0,0.0,0.0, //direção da camera 

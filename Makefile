@@ -1,9 +1,9 @@
 
 TARGET = Janela_jogo
 
-SRCS = main.cpp window.cpp game.cpp 
+SRCS = main.cpp window.cpp game.cpp meteor.cpp
 
-CC = gcc 
+CC = g++ 
 CFLAGS = -Wall 
 
 #pesquisar depois quais as flags para SO 
@@ -14,6 +14,7 @@ MACOS_LIBS = -framework GLUT -framework OpenGL
 MINGW_LIBS = -lfreeglut -lglew32 -lglu32 -lopengl32 -lwinmm -lgdi32
 
 #Modifique essa função com base no seu sistema 
+# LIBS = $(MINGW_LIBS)
 LIBS = $(LINUX_LIBS)
 
 all: $(TARGET)

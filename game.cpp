@@ -1,5 +1,6 @@
 #include "game.h"
 #include "window.h"
+#include "meteor.h"
 #include <GL/freeglut_std.h>
 #include <GL/gl.h>
 #include <cmath>
@@ -7,6 +8,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+#include <vector>
 
 #define ANGULAR_VEL 180.0f  
 #define PI 3.1415926
@@ -23,6 +25,8 @@ typedef struct{
 } Entity; 
 
 Entity player;
+//Lista global de meteoros
+std::vector<Meteor> meteors;
 
 //Movement variables
 bool up = 0;
@@ -56,19 +60,62 @@ void init_game_objs(){
     previous_time = glutGet(GLUT_ELAPSED_TIME);
 }
 
+void reset_player(){
+    player.x = 0.0f; 
+    player.y = 0.0f; 
+    player.rotation = 0.0f; 
+    player.vx = 0.0f;
+    player.vy = 0.0f;
+    
+    // adicionar lógica de perder vida
+}
+
+// Em game.cpp
+#include "meteor.h" // Garanta que meteor.h está incluído no topo
+
+// ...
+
+void check_collisions() {
+    float playerRadius = player.size *0.8; 
+
+    for (size_t i = 0; i < meteors.size(); ++i) {
+        Meteor &m = meteors[i];
+        if (!m.active) continue;
+        float meteorRadius = m.size;
+
+        float deltaX = player.x - m.x;
+        float deltaY = player.y - m.y;
+        float deltaZ = player.z - m.z;
+
+        // (dist_A_B)^2 = (deltaX * deltaX) + (deltaY * deltaY)
+        float distSq = (deltaX * deltaX) + (deltaY * deltaY) + (deltaZ * deltaZ);
+
+        float sumRadii = playerRadius + meteorRadius;
+        float sumRadiiSq = sumRadii * sumRadii;
+
+        if (distSq < sumRadiiSq) {
+            // barruou
+            reset_player();
+            respawnMeteor(&m);
+        }
+    }
+}
+
 //pequeno teste que move a nave pela janela 
 void update_game(void){
     
     calculate_delta();
     move_player();
-    fps_counter(); 
+    updateMeteors(&meteors, delta);
+    fps_counter();
+    check_collisions();
 
   //solicita ao glut que a tela seja redesenhada 
   glutPostRedisplay();
 }
 
 void draw_game(void){
-  
+  drawMeteors(&meteors);
   glPushMatrix();
       glTranslated(player.x,player.y,player.z);
       glRotatef(player.rotation,0.0,0.0,1.0);
@@ -131,6 +178,10 @@ void calculate_delta(){
     prev_delta = curr_delta;
 } 
 
+void init_desenhoMeteoro(){
+  initMeteors(&meteors, 20);
+  return;
+}
 void draw_spaceship(float size) {
     float height = size * 2.0f;
     float base_half = size / 2.0f;

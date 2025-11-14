@@ -8,8 +8,8 @@
     #include <OpenGL/glu.h>
 #else
     #include <GL/glut.h>
-    #include <GL/gl.h>
-    #include <GL/glu.h>
+    #include <GL/freeglut.h>
+    #include <GL/freeglut_std.h>
 #endif
 
 #define ESC 27
