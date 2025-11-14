@@ -60,13 +60,55 @@ void init_game_objs(){
     previous_time = glutGet(GLUT_ELAPSED_TIME);
 }
 
+void reset_player(){
+    player.x = 0.0f; 
+    player.y = 0.0f; 
+    player.rotation = 0.0f; 
+    player.vx = 0.0f;
+    player.vy = 0.0f;
+    
+    // adicionar lógica de perder vida
+}
+
+// Em game.cpp
+#include "meteor.h" // Garanta que meteor.h está incluído no topo
+
+// ...
+
+void check_collisions() {
+    float playerRadius = player.size *0.8; 
+
+    for (size_t i = 0; i < meteors.size(); ++i) {
+        Meteor &m = meteors[i];
+        if (!m.active) continue;
+        float meteorRadius = m.size;
+
+        float deltaX = player.x - m.x;
+        float deltaY = player.y - m.y;
+        float deltaZ = player.z - m.z;
+
+        // (dist_A_B)^2 = (deltaX * deltaX) + (deltaY * deltaY)
+        float distSq = (deltaX * deltaX) + (deltaY * deltaY) + (deltaZ * deltaZ);
+
+        float sumRadii = playerRadius + meteorRadius;
+        float sumRadiiSq = sumRadii * sumRadii;
+
+        if (distSq < sumRadiiSq) {
+            // barruou
+            reset_player();
+            respawnMeteor(&m);
+        }
+    }
+}
+
 //pequeno teste que move a nave pela janela 
 void update_game(void){
     
     calculate_delta();
-    updateMeteors(&meteors, delta);
     move_player();
-    fps_counter(); 
+    updateMeteors(&meteors, delta);
+    fps_counter();
+    check_collisions();
 
   //solicita ao glut que a tela seja redesenhada 
   glutPostRedisplay();

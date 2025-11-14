@@ -11,10 +11,10 @@ typedef struct {
     float rotation;       // ângulo de rotação
     float rotSpeed;       // velocidade de rotação
     float size;           // tamanho do meteoro
-    bool active;          // se está ativo (para respawn)
+    bool active = false;          // se está ativo (para respawn)
 } Meteor;
 
-// inicializa meteoros
+// chama respawnMeteor recursivamente
 void initMeteors(std::vector<Meteor>* meteors, int count);
 
 // atualiza meteoros a cada frame
@@ -23,4 +23,6 @@ void updateMeteors(std::vector<Meteor>* meteors, float deltaTime);
 // desenha todos os meteoros
 void drawMeteors(const std::vector<Meteor>* meteors);
 
+// inicializa cada meteoro com as especificações de tamanho e alcance
+void respawnMeteor(Meteor* m);
 #endif

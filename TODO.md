@@ -1,4 +1,4 @@
-# Lista (não esta ordenadado)
+# Lista (não esta ordenado)
 1- movimento
 2- acões do jogador(so tiro por enquanto)
 3- meteoros 

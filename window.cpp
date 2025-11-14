@@ -43,7 +43,7 @@ void display(void){
     glLoadIdentity();
     //LOGICA DO JOGO APLICADO AQUI 
     draw_game();
-    
+
     //glColor3f(1.0,0.0,0.0);
     //glutWireCube(1.0);
     
@@ -56,7 +56,7 @@ void reshape_win(int w, int h){
     
     glViewport(0,0, (GLsizei) w, (GLsizei) h);
     //projecão perspectiva 
-    gluPerspective(60, (float)w/(float)h, 1.0, 10.0f);
+    gluPerspective(60, (float)w/(float)h, 1.0, 100.0f);
     
         gluLookAt(0.0,0.0,9.0,//posição do olho
               0.0,0.0,0.0, //direção da camera 
