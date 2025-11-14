@@ -69,11 +69,7 @@ void key_press(int key, int x, int y){
       case GLUT_KEY_UP:
             up = true;
             break;
-        
-      case GLUT_KEY_DOWN:
-            down = true;
-            break;
-        
+
       case GLUT_KEY_LEFT:
             rot_left = true;
             break;
@@ -81,28 +77,13 @@ void key_press(int key, int x, int y){
       case GLUT_KEY_RIGHT:
             rot_right = true;
             break;
-      
-      case 'q':
-      case 'Q':
-            rot_left = true;
-            break;
-
-      case 'w':
-      case 'W':
-            rot_right = true; 
-            break;
       }
-}
-//TODO: A rotação não esta funcionando pq a função esta usando teclas normais e não especiais 
-// no caso vou mudar isso quando adicionar a movimentação de tanque 
+  }
+
 void key_release(int key, int x, int y){
     switch(key){
       case GLUT_KEY_UP:
             up = false;
-            break;
-        
-      case GLUT_KEY_DOWN:
-            down = false;
             break;
         
       case GLUT_KEY_LEFT:
@@ -113,14 +94,5 @@ void key_release(int key, int x, int y){
             rot_right = false;
             break;
       
-      case 'q':
-      case 'Q':
-            rot_left = false;
-            break;
-
-      case 'w':
-      case 'W':
-            rot_right = false; 
-            break;
-      }
+    }
 }
