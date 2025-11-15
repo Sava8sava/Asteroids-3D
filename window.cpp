@@ -26,6 +26,7 @@ void init_window(int argc, char** argv){
     glutDisplayFunc(display);
     glutReshapeFunc(reshape_win);
     glutKeyboardFunc(keyboard);
+    //glutKeyboardUpFunc(key_release);
     glutSpecialFunc(key_press);
     glutSpecialUpFunc(key_release);
     glutIdleFunc(update_game);
@@ -34,6 +35,15 @@ void init_window(int argc, char** argv){
 void keyboard(unsigned char key, int x, int y){
     switch(key){
     case ESC: exit(EXIT_SUCCESS); break;
+
+    case SPACEBAR: spacekey = true; break;
+    }
+    glutPostRedisplay();
+}
+
+void keyboard_release(unsigned char key, int x, int y){
+    switch(key){
+    case SPACEBAR: spacekey = false;
     }
     glutPostRedisplay();
 }

@@ -13,6 +13,7 @@
 #endif
 
 #define ESC 27
+#define SPACEBAR ' '
 
 //Declarações das funções da janela 
 void init_opengl(void);

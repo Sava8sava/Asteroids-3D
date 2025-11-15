@@ -12,29 +12,20 @@
 
 #define ANGULAR_VEL 180.0f  
 #define PI 3.1415926
-
-
-//Global variables 
-typedef struct{
-    float x,y,z;
-    float rotation;
-    float size;
-    float vx,vy;
-    float accel; 
-    float damping_rate;
-} Entity; 
+#define BULLET_SPEED 5.0f
+#define MAX_PROJECTILES 5
+#define MAX_PRJCT_DISTANCE 10.0f
 
 Entity player;
 //Lista global de meteoros
 std::vector<Meteor> meteors;
+std::vector<Bullet> projectiles;
 
 //Movement variables
 bool up = 0;
-bool down = 0;
-bool left = 0;
-bool right = 0;
 bool rot_left = 0;
 bool rot_right = 0;
+bool spacekey = 0;
 
 //Fps variables 
 static int frame_count = 0;
@@ -70,11 +61,6 @@ void reset_player(){
     // adicionar lógica de perder vida
 }
 
-// Em game.cpp
-#include "meteor.h" // Garanta que meteor.h está incluído no topo
-
-// ...
-
 void check_collisions() {
     float playerRadius = player.size *0.8; 
 
@@ -107,6 +93,12 @@ void update_game(void){
     calculate_delta();
     move_player();
     updateMeteors(&meteors, delta);
+
+    if(spacekey){
+    player_shot(&player);
+    spacekey = false;
+    }
+    update_bullets();
     fps_counter();
     check_collisions();
 
@@ -123,7 +115,8 @@ void draw_game(void){
       glColor3f(1.0,0.0,1.0);
       draw_spaceship(player.size);
   glPopMatrix();
-
+  
+  draw_bullet();
 }
 
 void move_player(){
@@ -158,30 +151,11 @@ void move_player(){
    //TODO: corrigir o movimento diagonal mais rapido, pesquisar como normalizar  
 }
 
-void fps_counter(){
-    frame_count++;
-    current_time = glutGet(GLUT_ELAPSED_TIME);
-    
-    //milliseconds
-    if(current_time - previous_time > 1000.0f){
-      fps = frame_count/((current_time - previous_time)/1000.0f);
-      printf("FPS: %.2f\n", fps);
-      previous_time = current_time;
-      frame_count = 0;
-    }
-    
-}
-
-void calculate_delta(){
-    float curr_delta = glutGet(GLUT_ELAPSED_TIME);
-    delta = (curr_delta - prev_delta)/1000.0f; 
-    prev_delta = curr_delta;
-} 
-
 void init_desenhoMeteoro(){
-  initMeteors(&meteors, 20);
+  initMeteors(&meteors, 10);
   return;
 }
+
 void draw_spaceship(float size) {
     float height = size * 2.0f;
     float base_half = size / 2.0f;
@@ -210,4 +184,75 @@ void draw_spaceship(float size) {
         glVertex3fv(P); glVertex3fv(C);
         glVertex3fv(P); glVertex3fv(D);
     glEnd();
+}
+
+void fps_counter(){
+    frame_count++;
+    current_time = glutGet(GLUT_ELAPSED_TIME);
+    
+    //milliseconds
+    if(current_time - previous_time > 1000.0f){
+      fps = frame_count/((current_time - previous_time)/1000.0f);
+      printf("FPS: %.2f\n", fps);
+      previous_time = current_time;
+      frame_count = 0;
+    }
+    
+}
+
+void calculate_delta(){
+  float curr_delta = glutGet(GLUT_ELAPSED_TIME);
+  delta = (curr_delta - prev_delta)/1000.0f; 
+  prev_delta = curr_delta;
+}
+
+void player_shot(Entity *p){
+
+  //checa se ja tem 5 tiros na tela
+  if(projectiles.size() >= MAX_PROJECTILES){return ;}
+
+  //calcula a direção que o player apontando
+  float player_angle = (p->rotation)  * (PI/ANGULAR_VEL);
+  float shot_dirx = -sinf(player_angle);
+  float shot_diry = cos(player_angle); 
+  Bullet new_bullet;
+
+  new_bullet.x = p->x;
+  new_bullet.y = p->y;
+  new_bullet.z = p->z;
+  new_bullet.Vx = shot_dirx * BULLET_SPEED;
+  new_bullet.Vy = shot_diry * BULLET_SPEED;
+
+  projectiles.push_back(new_bullet);
+}
+
+void update_bullets(){
+  for(size_t i = 0; i < projectiles.size(); ){
+    Bullet &b = projectiles[i];
+
+    b.x += b.Vx * delta;
+    b.y += b.Vy * delta;
+    b.z += b.Vz * delta;
+  
+  if(fabs(b.x) > MAX_PRJCT_DISTANCE || fabs(b.y) > MAX_PRJCT_DISTANCE ){
+     projectiles.erase(projectiles.begin() + i); 
+  }else{
+      ++i;
+    } 
+  }
+}
+
+void draw_bullet(){
+  glColor3f(1.0f,0.0f,0.0f);
+  for (const auto& bullet : projectiles){
+    glPushMatrix();
+      glTranslated(bullet.x,bullet.y,bullet.z);
+      glRotatef(90.0,-1.0,0.0,0.0);
+      glPointSize(4.0f);
+      glBegin(GL_POINTS);
+      glVertex3f(0.0f,0.0f,0.0f);
+      glEnd();
+    glPopMatrix();
+  }
+
 }

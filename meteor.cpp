@@ -74,6 +74,7 @@ void updateMeteors(std::vector<Meteor>* meteors, float deltaTime) {
 }
 
 void drawMeteors(const std::vector<Meteor>* meteors) {
+    glColor3f(0.5f,0.5f,0.5f);
     for (size_t i = 0; i < meteors->size(); ++i) {
         const Meteor &m = (*meteors)[i];
         if (!m.active) continue;
