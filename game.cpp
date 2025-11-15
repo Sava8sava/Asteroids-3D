@@ -98,7 +98,9 @@ void update_game(void){
     player_shot(&player);
     spacekey = false;
     }
+
     update_bullets();
+    check_bullet_collisions();
     fps_counter();
     check_collisions();
 
@@ -255,4 +257,40 @@ void draw_bullet(){
     glPopMatrix();
   }
 
+}
+
+void check_bullet_collisions() {
+  for (size_t i = 0; i < projectiles.size(); ) {
+    Bullet &bullet = projectiles[i];
+    bool bullet_hit = false;
+        
+      
+      for (size_t j = 0; j < meteors.size(); ++j) {
+          Meteor &m = meteors[j];
+          if (!m.active) continue; // Pula meteoros inativos
+            float bulletRadius = 0.1f; 
+            float meteorRadius = m.size;
+
+            float deltaX = bullet.x - m.x;
+            float deltaY = bullet.y - m.y;
+           
+            float distSq = (deltaX * deltaX) + (deltaY * deltaY); 
+
+            float sumRadii = bulletRadius + meteorRadius;
+            float sumRadiiSq = sumRadii * sumRadii;
+
+            if (distSq < sumRadiiSq) {
+              respawnMeteor(&m);                 
+                bullet_hit = true;
+                break; // A bala acertou, pode parar de checar contra outros meteoros
+            }
+        }
+        
+        if (bullet_hit) {
+            projectiles.erase(projectiles.begin() + i);
+        } else {
+            // o tiro não pegou em niguem
+            ++i; 
+        }
+    }
 }

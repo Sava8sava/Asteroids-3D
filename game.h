@@ -34,4 +34,5 @@ void draw_spaceship(float size);
 void player_shot(Entity *p);
 void update_bullets();
 void draw_bullet();
+void check_bullet_collisions();
 #endif
