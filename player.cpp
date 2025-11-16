@@ -1,0 +1,171 @@
+#include <stdio.h>
+#include <math.h>
+#include "player.h"
+#include <GL/freeglut_std.h>
+#include <GL/gl.h>
+#include <vector>
+
+#define ANGULAR_VEL 180.0f  
+#define PI 3.1415926
+#define BULLET_SPEED 5.0f
+#define MAX_PROJECTILES 5
+#define MAX_PRJCT_DISTANCE 10.0f
+#define PLAYER_SIZE 0.5f
+#define PLAYER_LIVES 3 //o valor maximo é de um byte 
+
+bool up = 0;
+bool rot_left = 0;
+bool rot_right = 0;
+bool spacekey = 0;
+
+
+void init_player_var(Player *p){
+    p->x = 0.0f; 
+    p->y = 0.0f; 
+    p->z= 0.0f;
+    p->rotation = 0.0f; 
+    p->size = PLAYER_SIZE; 
+    p->vx = 0.0f;
+    p->vy = 0.0f;
+    p->accel = 10.0f; 
+    p->damping_rate = 0.95f;
+    p->lives = PLAYER_LIVES;
+}
+
+void reset_player(Player *p){
+    p->x = 0.0f; 
+    p->y = 0.0f; 
+    p->rotation = 0.0f; 
+    p->vx = 0.0f;
+    p->vy = 0.0f;
+    p->lives -= 1;
+}
+
+void draw_player(Player *p){
+  glPushMatrix();
+      glTranslated(p->x,p->y,p->z);
+      glRotatef(p->rotation,0.0,0.0,1.0);
+      glRotatef(90.0,-1.0,0.0,0.0);
+      glColor3f(1.0,0.0,1.0);
+      draw_spaceship(p->size);
+  glPopMatrix();
+
+}
+
+void draw_spaceship(float size) {
+    float height = size * 2.0f;
+    float base_half = size / 2.0f;
+
+    float P[3] = {0.0f, 0.0f, height/2};     // Ponta
+    float A[3] = { base_half,  base_half, -height/2};
+    float B[3] = {-base_half,  base_half, -height/2};
+    float C[3] = {-base_half, -base_half, -height/2};
+    float D[3] = { base_half, -base_half, -height/2};
+    
+    glColor3f(1.0, 0.0, 1.0);
+
+    //BASE
+    glBegin(GL_LINE_LOOP);
+        glVertex3fv(A);
+        glVertex3fv(B);
+        glVertex3fv(C);
+        glVertex3fv(D);
+    glEnd();
+
+    // LATERAIS 
+    // Desenhar as arestas laterais
+    glBegin(GL_LINES);
+        glVertex3fv(P); glVertex3fv(A);
+        glVertex3fv(P); glVertex3fv(B);
+        glVertex3fv(P); glVertex3fv(C);
+        glVertex3fv(P); glVertex3fv(D);
+    glEnd();
+}
+
+void move_player(Player *p, float delta){
+    float accel_amount = p->accel * delta;
+    float rotation_rad = p->rotation *(PI/180.0f);
+
+    float frontal_dirx = -sinf(rotation_rad);
+    float frontal_diry = cosf(rotation_rad);
+
+    if (up) {
+      p->vx += frontal_dirx * accel_amount;
+      p->vy += frontal_diry * accel_amount;
+    }
+    if (rot_left){
+      p->rotation += ANGULAR_VEL * delta;
+    }
+    if(rot_right){
+      p->rotation -= ANGULAR_VEL * delta;
+    }
+    
+    p->vx *= p->damping_rate;
+    p->vy *= p->damping_rate;
+    
+    p->x += p->vx * delta;
+    p->y += p->vy * delta;
+
+    if (fabs(p->vx) < 0.001f) p->vx = 0.0f;
+    if (fabs(p->vy) < 0.001f) p->vy = 0.0f;
+    if (p->rotation > 360.0f) p->rotation -= 360.0f;
+    if (p->rotation < 0.0f) p->rotation += 360.0f;
+
+   //TODO: corrigir o movimento diagonal mais rapido, pesquisar como normalizar 
+}
+
+
+void player_shot(std::vector<Bullet> &proj,Player *p){
+
+  //checa se ja tem 5 tiros na tela
+  if(proj.size() >= MAX_PROJECTILES){return ;}
+
+  //calcula a direção que o player apontando
+  float player_angle = (p->rotation)  * (PI/ANGULAR_VEL);
+  float shot_dirx = -sinf(player_angle);
+  float shot_diry = cos(player_angle); 
+  Bullet new_bullet;
+
+  new_bullet.x = p->x;
+  new_bullet.y = p->y;
+  new_bullet.z = p->z;
+  new_bullet.Vx = shot_dirx * BULLET_SPEED;
+  new_bullet.Vy = shot_diry * BULLET_SPEED;
+
+  proj.push_back(new_bullet);
+}
+
+
+void update_bullets(std::vector<Bullet> &proj,float delta){
+  for(size_t i = 0; i < proj.size(); ){
+    Bullet &b = proj[i];
+
+    b.x += b.Vx * delta;
+    b.y += b.Vy * delta;
+    b.z += b.Vz * delta;
+  
+  if(fabs(b.x) > MAX_PRJCT_DISTANCE || fabs(b.y) > MAX_PRJCT_DISTANCE ){
+     proj.erase(proj.begin() + i); 
+  }else{
+      ++i;
+    } 
+  }
+}
+
+void draw_bullet(std::vector<Bullet> &proj){
+  glColor3f(1.0f,0.0f,0.0f);
+  for (const auto& bullet : proj){
+    glPushMatrix();
+      glTranslated(bullet.x,bullet.y,bullet.z);
+      glRotatef(90.0,-1.0,0.0,0.0);
+      glPointSize(4.0f);
+      glBegin(GL_POINTS);
+      glVertex3f(0.0f,0.0f,0.0f);
+      glEnd();
+    glPopMatrix();
+  }
+}
+
+bool is_player_alive(Player *p){
+  return (p->lives >= 0);
+}

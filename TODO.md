@@ -1,12 +1,10 @@
 # Lista (não esta ordenado)
 1- movimento - check 
-
-conjunto{
-2- acões do jogador(so tiro por enquanto) - falta colisão 
-3- meteoros - falta logica com tiros 
+2- acões do jogador - check
+3- meteoros - falta a sub divisão 
 4- colisões 
-}falta fazer com que o tiro destrua o meteoro e esse se multiplique 
-
 5- ufos 
 6- modelos e animações 
-7- sistema de pontos,vidas,game over 
+
+7- sistema de pontos
+7.1 -vidas,game over - falta uma tela de menu para iniciar o jogo(uma imagem que manda apertar um botão talves?) 
