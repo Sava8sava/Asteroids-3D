@@ -5,8 +5,6 @@
 #include <GL/gl.h>
 #include <vector>
 
-#define ANGULAR_VEL 180.0f  
-#define PI 3.1415926
 #define BULLET_SPEED 5.0f
 #define MAX_PROJECTILES 5
 #define MAX_PRJCT_DISTANCE 10.0f
@@ -123,7 +121,7 @@ void player_shot(std::vector<Bullet> &proj,Player *p){
   //calcula a direção que o player apontando
   float player_angle = (p->rotation)  * (PI/ANGULAR_VEL);
   float shot_dirx = -sinf(player_angle);
-  float shot_diry = cos(player_angle); 
+  float shot_diry = cosf(player_angle); 
   Bullet new_bullet;
 
   new_bullet.x = p->x;
@@ -153,9 +151,9 @@ void update_bullets(std::vector<Bullet> &proj,float delta){
 }
 
 void draw_bullet(std::vector<Bullet> &proj){
-  glColor3f(1.0f,0.0f,0.0f);
   for (const auto& bullet : proj){
     glPushMatrix();
+      glColor3f(0.0f,0.0f,1.0f);
       glTranslated(bullet.x,bullet.y,bullet.z);
       glRotatef(90.0,-1.0,0.0,0.0);
       glPointSize(4.0f);

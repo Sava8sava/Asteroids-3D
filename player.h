@@ -3,20 +3,7 @@
 //Global variables 
 #include <cstdint>
 #include <vector>
-typedef struct{
-    float x,y,z;
-    float rotation;
-    float size;
-    float vx,vy;
-    float accel; 
-    float damping_rate;
-    int8_t lives; //inteiro de um byte
-} Player; 
-
-typedef struct{
-    float x,y,z;
-    float Vx,Vy,Vz;
-} Bullet;
+#include "types.h"
 
 extern bool up,rot_left,rot_right,spacekey;
 

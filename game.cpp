@@ -1,21 +1,26 @@
 #include "game.h"
+#include "types.h"
 #include "window.h"
 #include "meteor.h"
 #include "player.h"
+#include "Ufo.h"
 #include <GL/freeglut_std.h>
 #include <GL/gl.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-#include <vector>
-
-
+#include <vector> 
+#include <cstdlib>
 
 Player player;
 //Lista global de meteoros
 std::vector<Meteor> meteors;
 //lista global de projetios carregados na tela
 std::vector<Bullet> projectiles;
+//no jogo original apenas um ufo aparecia na tela por vez
+//analisamos mudar isso 
+Ufo Zorg;
+std::vector<Bullet> ufo_projectiles;
 
 //Fps variables 
 static int frame_count = 0;
@@ -24,6 +29,9 @@ static float prev_delta = 0.0f;
 static float delta = 0.0f;
 static float previous_time = 0.0f;
 static float fps = 0.0f;
+static int points = 0;
+
+static float ufo_time = 0.0f;
 
 void init_game_objs(){
     //player properties
@@ -32,7 +40,7 @@ void init_game_objs(){
     previous_time = glutGet(GLUT_ELAPSED_TIME);
 }
 
-void check_collisions(Player *p) {
+void check_collisions_Player_meteor(Player *p) {
     float playerRadius = p->size *0.8; 
 
     for (size_t i = 0; i < meteors.size(); ++i) {
@@ -64,16 +72,28 @@ void update_game(void){
       calculate_delta();
       move_player(&player,delta);
       updateMeteors(&meteors, delta);
+      
 
+      ufo_time += delta;
+      spawn_ufo(&Zorg,ufo_time,points);
+      if(Zorg.active){
+        //printf("zorg ativo");
+        update_ufo(&Zorg,delta);
+        Zorg.shoot_timer += delta;
+        if(Zorg.shoot_timer >= Zorg.shoot_interval){
+          ufo_shot(ufo_projectiles,&Zorg,&player);
+        }
+      }
+       
       if(spacekey){
       player_shot(projectiles,&player);
-      spacekey = false;
-      }
-
+      spacekey = false;}   
       update_bullets(projectiles,delta);
-      check_bullet_collisions();
+      update_ufo_bullets(ufo_projectiles,delta);
+      check_bullet_meteor_collisions();
+      check_collisions_Player_meteor(&player);
+      
       fps_counter();
-      check_collisions(&player);
     }else{
       printf("It's over, sobra nada para nave betinha");
       glutLeaveMainLoop();
@@ -84,8 +104,10 @@ void update_game(void){
 
 void draw_game(void){
   drawMeteors(&meteors);
-  draw_player(&player);  
+  draw_player(&player);
+  draw_ufo(&Zorg);
   draw_bullet(projectiles);
+  draw_ufo_bullet(ufo_projectiles);
 }
 
 void init_desenhoMeteoro(){
@@ -101,6 +123,7 @@ void fps_counter(){
     if(current_time - previous_time > 1000.0f){
       fps = frame_count/((current_time - previous_time)/1000.0f);
       printf("FPS: %.2f\n", fps);
+      printf("Pontos: %i\n", points);
       previous_time = current_time;
       frame_count = 0;
     }
@@ -113,7 +136,7 @@ void calculate_delta(){
   prev_delta = curr_delta;
 }
 
-void check_bullet_collisions() {
+void check_bullet_meteor_collisions() {
   for (size_t i = 0; i < projectiles.size(); ) {
     Bullet &bullet = projectiles[i];
     bool bullet_hit = false;
@@ -124,7 +147,8 @@ void check_bullet_collisions() {
         if (!m.active) continue; // Pula meteoros inativos
           float bulletRadius = 0.1f; 
           float meteorRadius = m.size;
-
+          //TODO transformar as cordenadas numa struct separada
+          // e transforma distSq e sumRadii em funções   
           float deltaX = bullet.x - m.x;
           float deltaY = bullet.y - m.y;
          
@@ -136,6 +160,7 @@ void check_bullet_collisions() {
           if (distSq < sumRadiiSq) {
             respawnMeteor(&m);                 
               bullet_hit = true;
+              points += 100;
               break; // A bala acertou, pode parar de checar contra outros meteoros
           }
       }
@@ -148,3 +173,6 @@ void check_bullet_collisions() {
         }
     }
 }
+
+
+
