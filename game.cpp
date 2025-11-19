@@ -158,18 +158,49 @@ void check_bullet_meteor_collisions() {
           float sumRadiiSq = sumRadii * sumRadii;
 
           if (distSq < sumRadiiSq) {
-            respawnMeteor(&m);                 
               bullet_hit = true;
               points += 100;
+
+              float oldX = m.x, oldY = m.y, oldZ = m.z;
+              float oldSize = m.size;
+
+              if (j < meteors.size() - 1){
+                meteors[j] = meteors.back();
+              }
+              meteors.pop_back();
+
+              if(oldSize > 0.6f){
+                for(int k = 0; k < 3; k++){
+                  Meteor smallM;
+                  smallM.active = true;
+
+                  smallM.x = oldX;
+                  smallM.y = oldY;
+                  smallM.z = oldZ;
+
+                  smallM.size = oldSize * 0.5f;
+
+                  float spread = 2.0f;
+                  smallM.vx = randRange(-spread, spread);
+                  smallM.vy = randRange(-spread, spread);
+
+                  smallM.vz = randRange(8.0f, 12.0f);
+
+                  smallM.rotation = randRange(0.0f, 360.0f);
+                  smallM.rotSpeed = randRange(-4.0f, 4.0f);
+
+                  meteors.push_back(smallM);
+                }
+              }
               break; // A bala acertou, pode parar de checar contra outros meteoros
           }
       }
-        
+
         if (bullet_hit) {
             projectiles.erase(projectiles.begin() + i);
         } else {
             // o tiro não pegou em niguem
-            ++i; 
+            ++i;
         }
     }
 }

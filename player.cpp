@@ -25,7 +25,7 @@ void init_player_var(Player *p){
     p->size = PLAYER_SIZE; 
     p->vx = 0.0f;
     p->vy = 0.0f;
-    p->accel = 10.0f; 
+    p->accel = 150.0f; 
     p->damping_rate = 0.95f;
     p->lives = PLAYER_LIVES;
 }
