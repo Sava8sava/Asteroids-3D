@@ -66,7 +66,7 @@ void init_ufo(Ufo *u, int points){
 }
 
 void update_ufo(Ufo *u,float delta){
-  const float WRAP_X = BOUNDARY_X +4.0f;
+  const float WRAP_X = BOUNDARY_X + 4.0f;
   const float WRAP_Y = BOUNDARY_Y + 4.0f;
   const float DESPAWN_LIMIT_X = BOUNDARY_X + 10.0f;
   const float DESPAWN_LIMIT_Y = BOUNDARY_Y + 10.0f; 
@@ -88,8 +88,10 @@ void draw_ufo(Ufo *u){
   glPushMatrix();
     glTranslated(u->x,u->y,u->z);
     glRotated(90.0,-1.0,0.0,0.0);
+    glDisable(GL_TEXTURE_2D);//correção feita pra n escurecer o ovni
     glColor3f(0.0,1.0,0.5);
     glutSolidCube(u->size);
+    glEnable(GL_TEXTURE_2D);
   glPopMatrix();
 
 }
@@ -160,6 +162,7 @@ void update_ufo_bullets(std::vector<Bullet> &ufo_proj,float delta){
 void draw_ufo_bullet(std::vector<Bullet> &ufo_proj){
   for (const auto& bullet : ufo_proj){
     glPushMatrix();
+      glDisable(GL_TEXTURE_2D);
       glColor3f(0.0f,0.0f,1.0f);
       glTranslated(bullet.x,bullet.y,bullet.z);
       glRotatef(90.0,-1.0,0.0,0.0);
@@ -167,6 +170,7 @@ void draw_ufo_bullet(std::vector<Bullet> &ufo_proj){
       glBegin(GL_POINTS);
       glVertex3f(0.3f,1.0f,0.7f);
       glEnd();
+      glEnable(GL_TEXTURE_2D);
     glPopMatrix();
   }
 }

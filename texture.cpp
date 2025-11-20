@@ -9,7 +9,7 @@
 
 GLuint playerTexture;
 GLuint meteorTexture;
-
+GLuint propulsorTexture;
 
 GLuint loadTexture(const char* filename) {
     GLuint textureID;
