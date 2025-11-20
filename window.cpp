@@ -17,6 +17,7 @@ void init_opengl(void){
     playerTexture = loadTexture("nave.jpg");
     meteorTexture = loadTexture("meteoro.jpg");
     propulsorTexture = loadTexture("nave_propulsao.jpg");
+    backTexture = loadTexture("netespaco1.jpg");
 
 }
 

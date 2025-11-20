@@ -113,7 +113,31 @@ void update_game(void){
   glutPostRedisplay();
 }
 
+void draw_background() {
+    glPushMatrix();
+        glDepthMask(GL_FALSE);
+
+        glBindTexture(GL_TEXTURE_2D, backTexture);
+        glColor3f(1.0f, 1.0f, 1.0f);
+
+        glTranslatef(0.0f, 0.0f, -50.0f);
+
+        float bgSizeX = 120.0f;
+        float bgSizeY = 90.0f;
+
+        glBegin(GL_QUADS);
+            glTexCoord2f(0.0f, 0.0f); glVertex3f(-bgSizeX, -bgSizeY, 0.0f);
+            glTexCoord2f(1.0f, 0.0f); glVertex3f( bgSizeX, -bgSizeY, 0.0f);
+            glTexCoord2f(1.0f, 1.0f); glVertex3f( bgSizeX,  bgSizeY, 0.0f);
+            glTexCoord2f(0.0f, 1.0f); glVertex3f(-bgSizeX,  bgSizeY, 0.0f);
+        glEnd();
+
+        glDepthMask(GL_TRUE);
+    glPopMatrix();
+}
+
 void draw_game(void){
+  draw_background();
   drawMeteors(&meteors);
   draw_player(&player);
   draw_ufo(&Zorg);

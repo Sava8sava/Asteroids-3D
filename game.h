@@ -14,4 +14,6 @@ void check_bullet_meteor_collisions();
 void check_bullet_ufo_collisions();
 //ações do player 
 //global player action variables 
+
+void draw_background();
 #endif
