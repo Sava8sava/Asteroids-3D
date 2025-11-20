@@ -1,8 +1,8 @@
 #include "window.h"
 #include "game.h"
 #include "player.h"
+#include "texture.h"
 #include <GL/freeglut_std.h>
-#include <GL/glut.h>
 #include <GL/glut.h>
 #include <cstdlib>
 #include <stdio.h>
@@ -11,6 +11,12 @@
 void init_opengl(void){
     glClearColor(1.0,1.0,1.0,1.0);
     glEnable(GL_DEPTH_TEST);
+
+    glEnable(GL_TEXTURE_2D);
+
+    playerTexture = loadTexture("nave.jpg");
+    meteorTexture = loadTexture("meteoro.jpg");
+
 }
 
 void init_window(int argc, char** argv){

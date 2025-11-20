@@ -1,5 +1,6 @@
 // meteor.cpp
 #include "meteor.h"
+#include "texture.h"
 #include <cmath>
 #include <cstdlib>
 #include <stdio.h>
@@ -74,7 +75,12 @@ void updateMeteors(std::vector<Meteor>* meteors, float deltaTime) {
 }
 
 void drawMeteors(const std::vector<Meteor>* meteors) {
-    glColor3f(0.5f,0.5f,0.5f);
+    GLUquadric* quadric = gluNewQuadric();
+    gluQuadricTexture(quadric, GL_TRUE);
+    gluQuadricNormals(quadric, GLU_SMOOTH);
+
+    glBindTexture(GL_TEXTURE_2D, meteorTexture);
+    glColor3f(1.0f, 1.0f, 1.0f);
     for (size_t i = 0; i < meteors->size(); ++i) {
         const Meteor &m = (*meteors)[i];
         if (!m.active) continue;
@@ -89,8 +95,10 @@ void drawMeteors(const std::vector<Meteor>* meteors) {
         glPushMatrix();
             glTranslatef(m.x, m.y, m.z);
             glRotatef(m.rotation, 0.0f, 1.0f, 0.0f);
-            glutSolidSphere(m.size, 16, 16);
+            gluSphere(quadric, m.size, 16, 16);
         glPopMatrix();
     }
+
+    gluDeleteQuadric(quadric);
 }
 

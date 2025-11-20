@@ -15,6 +15,9 @@
 #define ESC 27
 #define SPACEBAR ' '
 
+extern GLuint playerTexture;
+extern GLuint meteorTexture;
+
 //Declarações das funções da janela 
 void init_opengl(void);
 void init_window(int argc, char** argv);

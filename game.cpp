@@ -1,6 +1,6 @@
 #include "game.h"
 #include "types.h"
-#include "window.h"
+#include "texture.h"
 #include "meteor.h"
 #include "player.h"
 #include "Ufo.h"

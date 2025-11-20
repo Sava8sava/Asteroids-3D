@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <math.h>
 #include "player.h"
+#include "texture.h"
 #include <GL/freeglut_std.h>
 #include <GL/gl.h>
 #include <vector>
@@ -15,7 +16,6 @@ bool up = 0;
 bool rot_left = 0;
 bool rot_right = 0;
 bool spacekey = 0;
-
 
 void init_player_var(Player *p){
     p->x = 0.0f; 
@@ -60,23 +60,39 @@ void draw_spaceship(float size) {
     float C[3] = {-base_half, -base_half, -height/2};
     float D[3] = { base_half, -base_half, -height/2};
     
-    glColor3f(1.0, 0.0, 1.0);
+    glBindTexture(GL_TEXTURE_2D, playerTexture);
+    glColor3f(1.0, 1.0, 1.0);
 
     //BASE
-    glBegin(GL_LINE_LOOP);
-        glVertex3fv(A);
-        glVertex3fv(B);
-        glVertex3fv(C);
-        glVertex3fv(D);
+    glBegin(GL_QUADS);
+        glTexCoord2f(0.0f, 0.0f); glVertex3fv(C);
+        glTexCoord2f(1.0f, 0.0f); glVertex3fv(D);
+        glTexCoord2f(1.0f, 1.0f); glVertex3fv(A);
+        glTexCoord2f(0.0f, 1.0f); glVertex3fv(B);
     glEnd();
 
     // LATERAIS 
     // Desenhar as arestas laterais
-    glBegin(GL_LINES);
-        glVertex3fv(P); glVertex3fv(A);
-        glVertex3fv(P); glVertex3fv(B);
-        glVertex3fv(P); glVertex3fv(C);
-        glVertex3fv(P); glVertex3fv(D);
+    glBegin(GL_TRIANGLES);
+        // Face Frontal (P-D-A)
+        glTexCoord2f(0.5f, 1.0f); glVertex3fv(P);
+        glTexCoord2f(1.0f, 0.0f); glVertex3fv(D);
+        glTexCoord2f(0.0f, 0.0f); glVertex3fv(A);
+
+        // Face Direita (P-A-B)
+        glTexCoord2f(0.5f, 1.0f); glVertex3fv(P);
+        glTexCoord2f(1.0f, 0.0f); glVertex3fv(A);
+        glTexCoord2f(0.0f, 0.0f); glVertex3fv(B);
+
+        // Face Traseira (P-B-C)
+        glTexCoord2f(0.5f, 1.0f); glVertex3fv(P);
+        glTexCoord2f(1.0f, 0.0f); glVertex3fv(B);
+        glTexCoord2f(0.0f, 0.0f); glVertex3fv(C);
+
+        // Face Esquerda (P-C-D)
+        glTexCoord2f(0.5f, 1.0f); glVertex3fv(P);
+        glTexCoord2f(1.0f, 0.0f); glVertex3fv(C);
+        glTexCoord2f(0.0f, 0.0f); glVertex3fv(D);
     glEnd();
 }
 
