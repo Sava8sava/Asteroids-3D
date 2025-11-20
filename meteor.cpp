@@ -1,5 +1,6 @@
 // meteor.cpp
 #include "meteor.h"
+#include "texture.h"
 #include <cmath>
 #include <cstdlib>
 #include <stdio.h>
@@ -48,8 +49,8 @@ void initMeteors(std::vector<Meteor>* meteors, int count) {
 }
 
 void updateMeteors(std::vector<Meteor>* meteors, float deltaTime) {
-    const float WRAP_X = BOUNDARY_X + 4.0f;
-    const float WRAP_Y = BOUNDARY_Y + 4.0f;
+    const float WRAP_X = BOUNDARY_X + 1.0f;
+    const float WRAP_Y = BOUNDARY_Y + 1.0f;
 
     for (size_t i = 0; i < meteors->size(); ++i) {
         Meteor &m = (*meteors)[i];
@@ -74,7 +75,12 @@ void updateMeteors(std::vector<Meteor>* meteors, float deltaTime) {
 }
 
 void drawMeteors(const std::vector<Meteor>* meteors) {
-    glColor3f(0.5f,0.5f,0.5f);
+    GLUquadric* quadric = gluNewQuadric();
+    gluQuadricTexture(quadric, GL_TRUE);
+    gluQuadricNormals(quadric, GLU_SMOOTH);
+
+    glBindTexture(GL_TEXTURE_2D, meteorTexture);
+    glColor3f(1.0f, 1.0f, 1.0f);
     for (size_t i = 0; i < meteors->size(); ++i) {
         const Meteor &m = (*meteors)[i];
         if (!m.active) continue;
@@ -89,8 +95,37 @@ void drawMeteors(const std::vector<Meteor>* meteors) {
         glPushMatrix();
             glTranslatef(m.x, m.y, m.z);
             glRotatef(m.rotation, 0.0f, 1.0f, 0.0f);
-            glutSolidSphere(m.size, 16, 16);
+            gluSphere(quadric, m.size, 16, 16);
         glPopMatrix();
     }
+
+    gluDeleteQuadric(quadric);
 }
 
+void splitMeteor(std::vector<Meteor>* meteors, Meteor parent) {
+    if (parent.size <= 0.6f) {
+        return;
+    }
+
+    // cria 3 pedaços
+    for (int k = 0; k < 3; k++) {
+        Meteor smallM;
+        smallM.active = true;
+
+        smallM.x = parent.x;
+        smallM.y = parent.y;
+        smallM.z = parent.z;
+
+        smallM.size = parent.size * 0.5f;
+
+        float spread = 1.5f;
+        smallM.vx = parent.vx + randRange(-spread, spread); // Usa a função interna do arquivo!
+        smallM.vy = parent.vy + randRange(-spread, spread);
+        smallM.vz = parent.vz + randRange(8.0f, 12.0f); // Mantém padrão ou varia
+
+        smallM.rotation = randRange(0.0f, 360.0f);
+        smallM.rotSpeed = randRange(-4.0f, 4.0f);
+
+        meteors->push_back(smallM);
+    }
+}

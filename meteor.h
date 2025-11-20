@@ -25,4 +25,8 @@ void drawMeteors(const std::vector<Meteor>* meteors);
 
 // inicializa cada meteoro com as especificações de tamanho e alcance
 void respawnMeteor(Meteor* m);
+
+void splitMeteor(std::vector<Meteor>* meteors, Meteor parent); //adicionei pra quantidade de meteoros n ficar pequena
+
+float randRange(float min, float max);
 #endif

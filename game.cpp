@@ -1,6 +1,6 @@
 #include "game.h"
 #include "types.h"
-#include "window.h"
+#include "texture.h"
 #include "meteor.h"
 #include "player.h"
 #include "Ufo.h"
@@ -65,10 +65,21 @@ void check_collisions_Player_meteor(Player *p) {
         }
     }
 }
-
+int cont = 0;
 //pequeno teste que move a nave pela janela 
 void update_game(void){
     if(is_player_alive(&player)){
+      cont++;
+      if (cont % 9000 == 0) {
+          // progressão de dificuldade papai
+          int new_count = 1 + (points / 5000);
+          for(int i = 0; i < new_count; i++){
+              Meteor m;
+              respawnMeteor(&m); // Cria nas bordas
+              meteors.push_back(m); // Adiciona à lista existente
+          }
+      }
+
       calculate_delta();
       move_player(&player,delta);
       updateMeteors(&meteors, delta);
@@ -158,18 +169,26 @@ void check_bullet_meteor_collisions() {
           float sumRadiiSq = sumRadii * sumRadii;
 
           if (distSq < sumRadiiSq) {
-            respawnMeteor(&m);                 
               bullet_hit = true;
               points += 100;
+
+              Meteor hitMeteor = m;
+
+              if (j < meteors.size() - 1){
+                meteors[j] = meteors.back();
+              }
+              meteors.pop_back();
+
+              splitMeteor(&meteors, hitMeteor);
               break; // A bala acertou, pode parar de checar contra outros meteoros
           }
       }
-        
+
         if (bullet_hit) {
             projectiles.erase(projectiles.begin() + i);
         } else {
             // o tiro não pegou em niguem
-            ++i; 
+            ++i;
         }
     }
 }

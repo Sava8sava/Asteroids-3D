@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <math.h>
 #include "player.h"
+#include "texture.h"
 #include <GL/freeglut_std.h>
 #include <GL/gl.h>
 #include <vector>
@@ -16,7 +17,6 @@ bool rot_left = 0;
 bool rot_right = 0;
 bool spacekey = 0;
 
-
 void init_player_var(Player *p){
     p->x = 0.0f; 
     p->y = 0.0f; 
@@ -25,7 +25,7 @@ void init_player_var(Player *p){
     p->size = PLAYER_SIZE; 
     p->vx = 0.0f;
     p->vy = 0.0f;
-    p->accel = 10.0f; 
+    p->accel = 150.0f; 
     p->damping_rate = 0.95f;
     p->lives = PLAYER_LIVES;
 }
@@ -60,24 +60,75 @@ void draw_spaceship(float size) {
     float C[3] = {-base_half, -base_half, -height/2};
     float D[3] = { base_half, -base_half, -height/2};
     
-    glColor3f(1.0, 0.0, 1.0);
+    glBindTexture(GL_TEXTURE_2D, playerTexture);
+    glColor3f(1.0, 1.0, 1.0);
 
     //BASE
-    glBegin(GL_LINE_LOOP);
-        glVertex3fv(A);
-        glVertex3fv(B);
-        glVertex3fv(C);
-        glVertex3fv(D);
+    glBegin(GL_QUADS);
+        glTexCoord2f(0.0f, 0.0f); glVertex3fv(C);
+        glTexCoord2f(1.0f, 0.0f); glVertex3fv(D);
+        glTexCoord2f(1.0f, 1.0f); glVertex3fv(A);
+        glTexCoord2f(0.0f, 1.0f); glVertex3fv(B);
     glEnd();
 
     // LATERAIS 
     // Desenhar as arestas laterais
-    glBegin(GL_LINES);
-        glVertex3fv(P); glVertex3fv(A);
-        glVertex3fv(P); glVertex3fv(B);
-        glVertex3fv(P); glVertex3fv(C);
-        glVertex3fv(P); glVertex3fv(D);
+    glBegin(GL_TRIANGLES);
+        // Face Frontal (P-D-A)
+        glTexCoord2f(0.5f, 1.0f); glVertex3fv(P);
+        glTexCoord2f(1.0f, 0.0f); glVertex3fv(D);
+        glTexCoord2f(0.0f, 0.0f); glVertex3fv(A);
+
+        // Face Direita (P-A-B)
+        glTexCoord2f(0.5f, 1.0f); glVertex3fv(P);
+        glTexCoord2f(1.0f, 0.0f); glVertex3fv(A);
+        glTexCoord2f(0.0f, 0.0f); glVertex3fv(B);
+
+        // Face Traseira (P-B-C)
+        glTexCoord2f(0.5f, 1.0f); glVertex3fv(P);
+        glTexCoord2f(1.0f, 0.0f); glVertex3fv(B);
+        glTexCoord2f(0.0f, 0.0f); glVertex3fv(C);
+
+        // Face Esquerda (P-C-D)
+        glTexCoord2f(0.5f, 1.0f); glVertex3fv(P);
+        glTexCoord2f(1.0f, 0.0f); glVertex3fv(C);
+        glTexCoord2f(0.0f, 0.0f); glVertex3fv(D);
     glEnd();
+
+    if (up) {
+        glBindTexture(GL_TEXTURE_2D, propulsorTexture);
+        
+        float flicker = (rand() % 10) / 20.0f;
+        float fireLen = size * (0.5f + flicker);
+
+        float F[3] = {0.0f, 0.0f, -height/2 - fireLen};
+        
+        glBegin(GL_TRIANGLES);
+            
+            // Face 1
+            glTexCoord2f(0.0f, 0.0f); glVertex3fv(A);
+            glTexCoord2f(1.0f, 0.0f); glVertex3fv(B);
+            glTexCoord2f(0.5f, 1.0f); glVertex3fv(F);
+
+            // Face 2
+            glTexCoord2f(0.0f, 0.0f); glVertex3fv(B);
+            glTexCoord2f(1.0f, 0.0f); glVertex3fv(C);
+            glTexCoord2f(0.5f, 1.0f); glVertex3fv(F);
+
+            // Face 3
+            glTexCoord2f(0.0f, 0.0f); glVertex3fv(C);
+            glTexCoord2f(1.0f, 0.0f); glVertex3fv(D);
+            glTexCoord2f(0.5f, 1.0f); glVertex3fv(F);
+
+            // Face 4
+            glTexCoord2f(0.0f, 0.0f); glVertex3fv(D);
+            glTexCoord2f(1.0f, 0.0f); glVertex3fv(A);
+            glTexCoord2f(0.5f, 1.0f); glVertex3fv(F);
+        glEnd();
+        
+        // Resetar cor para branco para não afetar outros desenhos
+        glColor3f(1.0, 1.0, 1.0);
+    }
 }
 
 void move_player(Player *p, float delta){
@@ -153,12 +204,14 @@ void update_bullets(std::vector<Bullet> &proj,float delta){
 void draw_bullet(std::vector<Bullet> &proj){
   for (const auto& bullet : proj){
     glPushMatrix();
+      glDisable(GL_TEXTURE_2D);
       glColor3f(0.0f,0.0f,1.0f);
       glTranslated(bullet.x,bullet.y,bullet.z);
       glRotatef(90.0,-1.0,0.0,0.0);
       glPointSize(4.0f);
       glBegin(GL_POINTS);
       glVertex3f(0.0f,0.0f,0.0f);
+      glEnable(GL_TEXTURE_2D);
       glEnd();
     glPopMatrix();
   }
