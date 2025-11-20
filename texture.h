@@ -17,6 +17,7 @@
 extern GLuint playerTexture;
 extern GLuint meteorTexture;
 extern GLuint propulsorTexture;
+extern GLuint backTexture;
 
 GLuint loadTexture(const char* filename);
 
