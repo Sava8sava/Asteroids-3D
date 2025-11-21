@@ -6,11 +6,11 @@
 #include <GL/gl.h>
 #include <vector>
 
-#define BULLET_SPEED 5.0f
+#define BULLET_SPEED 10.0f
 #define MAX_PROJECTILES 5
 #define MAX_PRJCT_DISTANCE 10.0f
 #define PLAYER_SIZE 0.5f
-#define PLAYER_LIVES 3 //o valor maximo é de um byte 
+#define PLAYER_LIVES 10 //o valor maximo é de um byte 
 
 bool up = 0;
 bool rot_left = 0;
@@ -25,7 +25,7 @@ void init_player_var(Player *p){
     p->size = PLAYER_SIZE; 
     p->vx = 0.0f;
     p->vy = 0.0f;
-    p->accel = 150.0f; 
+    p->accel = 20.0f; 
     p->damping_rate = 0.95f;
     p->lives = PLAYER_LIVES;
 }
@@ -159,10 +159,16 @@ void move_player(Player *p, float delta){
     if (fabs(p->vy) < 0.001f) p->vy = 0.0f;
     if (p->rotation > 360.0f) p->rotation -= 360.0f;
     if (p->rotation < 0.0f) p->rotation += 360.0f;
-
-   //TODO: corrigir o movimento diagonal mais rapido, pesquisar como normalizar 
+    
+    const float WRAP_X = BOUNDARY_X + 1.0f;
+    const float WRAP_Y = BOUNDARY_Y + 1.0f;
+    
+    if (p->x > WRAP_X) p->x = -WRAP_X;
+    if (p->x < -WRAP_X) p->x = WRAP_X;
+    if (p->y > WRAP_Y) p->y = -WRAP_Y;
+    if (p->y < -WRAP_Y) p->y = WRAP_Y;
+  
 }
-
 
 void player_shot(std::vector<Bullet> &proj,Player *p){
 
@@ -170,7 +176,7 @@ void player_shot(std::vector<Bullet> &proj,Player *p){
   if(proj.size() >= MAX_PROJECTILES){return ;}
 
   //calcula a direção que o player apontando
-  float player_angle = (p->rotation)  * (PI/ANGULAR_VEL);
+  float player_angle = (p->rotation)  * (PI/180.0f);
   float shot_dirx = -sinf(player_angle);
   float shot_diry = cosf(player_angle); 
   Bullet new_bullet;
@@ -210,9 +216,9 @@ void draw_bullet(std::vector<Bullet> &proj){
       glRotatef(90.0,-1.0,0.0,0.0);
       glPointSize(4.0f);
       glBegin(GL_POINTS);
-      glVertex3f(0.0f,0.0f,0.0f);
-      glEnable(GL_TEXTURE_2D);
+        glVertex3f(0.0f,0.0f,0.0f);
       glEnd();
+      glEnable(GL_TEXTURE_2D);
     glPopMatrix();
   }
 }

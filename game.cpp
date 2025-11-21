@@ -87,6 +87,7 @@ void update_game(void){
 
       ufo_time += delta;
       spawn_ufo(&Zorg,ufo_time,points);
+
       if(Zorg.active){
         //printf("zorg ativo");
         update_ufo(&Zorg,delta);
@@ -97,12 +98,17 @@ void update_game(void){
       }
        
       if(spacekey){
-      player_shot(projectiles,&player);
-      spacekey = false;}   
+        player_shot(projectiles,&player);
+        spacekey = false;
+      }
+
       update_bullets(projectiles,delta);
       update_ufo_bullets(ufo_projectiles,delta);
+      check_P_bullet_ufo_collisions(&Zorg,points);
+      check_U_bullet_player_collisions(&Zorg,&player);
       check_bullet_meteor_collisions();
       check_collisions_Player_meteor(&player);
+      
       
       fps_counter();
     }else{
@@ -209,7 +215,8 @@ void check_bullet_meteor_collisions() {
       }
 
         if (bullet_hit) {
-            projectiles.erase(projectiles.begin() + i);
+            projectiles[i] = projectiles.back();
+            projectiles.pop_back();
         } else {
             // o tiro não pegou em niguem
             ++i;
@@ -217,5 +224,74 @@ void check_bullet_meteor_collisions() {
     }
 }
 
+void check_P_bullet_ufo_collisions(Ufo *u, int &points) {
+  if(!u->active){
+    return;
+  }
+  float ufoRadius = u->size * 0.8f;
 
+  for (size_t i = 0; i < projectiles.size(); ) {
+    Bullet &bullet = projectiles[i];      
 
+        float bulletRadius = 0.1f; 
+    
+        //TODO transformar as cordenadas numa struct separada
+        // e transforma distSq e sumRadii em funções
+        
+        float deltaX = bullet.x - u->x;
+        float deltaY = bullet.y - u->y;
+       
+        float distSq = (deltaX * deltaX) + (deltaY * deltaY); 
+
+        float sumRadii = bulletRadius + ufoRadius;
+        float sumRadiiSq = sumRadii * sumRadii;
+
+        if (distSq < sumRadiiSq) {
+          if(u->type == BIG_UFO){
+            points += 200;
+          }else{
+            points += 500;
+          }
+          
+          u->active = false;
+          projectiles[i] = projectiles.back();
+          projectiles.pop_back();
+            return;
+        }else{
+          i++;
+    }
+  }
+}
+
+void check_U_bullet_player_collisions(Ufo *u, Player *p) {
+  if(!u->active){
+    return;
+  }
+
+  float playerRadius = p->size * 0.5f;
+
+  for (size_t i = 0; i < ufo_projectiles.size(); ) {
+    Bullet &bullet = ufo_projectiles[i];      
+
+        float bulletRadius = 0.1f; 
+    
+        //TODO transformar as cordenadas numa struct separada
+        // e transforma distSq e sumRadii em funções
+        
+        float deltaX = bullet.x - p->x;
+        float deltaY = bullet.y - p->y;
+       
+        float distSq = (deltaX * deltaX) + (deltaY * deltaY); 
+
+        float sumRadii = bulletRadius + playerRadius;
+        float sumRadiiSq = sumRadii * sumRadii;
+
+        if (distSq < sumRadiiSq) {
+          reset_player(p);
+          ufo_projectiles[i] = ufo_projectiles.back();
+          ufo_projectiles.pop_back();
+        }else{
+          i++;
+    }
+  }
+}

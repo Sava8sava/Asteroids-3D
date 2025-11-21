@@ -32,7 +32,10 @@ typedef struct{
 } Bullet;
 
 //constantes
-const float ANGULAR_VEL = 180.0f;
+const float ANGULAR_VEL = 360.0f;
 const float PI = 3.1415926f;
+const float BOUNDARY_X = 8.0f;
+const float BOUNDARY_Y = 6.0f;
+
 
 #endif

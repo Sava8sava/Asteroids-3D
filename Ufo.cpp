@@ -6,13 +6,11 @@
 #include <GL/freeglut_std.h>
 #include <GL/gl.h>
 
-const float BIG_UFO_VELOCITY = 5.0f;
+const float BIG_UFO_VELOCITY = 3.0f;
 const float BIG_UFO_SIZE = 0.8f;
-const float LIL_UFO_VELOCIY = 8.0f; 
+const float LIL_UFO_VELOCIY = 7.0f; 
 const float LIL_UFO_SIZE = 0.3f;
-const float BOUNDARY_X = 8.0f;
-const float BOUNDARY_Y = 6.0f; 
-const float BULLET_SPEED = 6.0f;
+const float BULLET_SPEED = 2.0f;
 const float MAX_PRJCT_DISTANCE = 10.0f; 
 const int MAX_PROJECTILES = 3;
 
@@ -40,7 +38,7 @@ Ufos_types ufo_spawn_prob(int points){
 void init_ufo(Ufo *u, int points){
   u->type = ufo_spawn_prob(points);
   u->shoot_timer = 0.0f;
-  u->shoot_interval = 3.0f;
+  u->shoot_interval = 5.0f;
   if(u->type == 0){
     u->size = BIG_UFO_SIZE;
     u->velocity = BIG_UFO_VELOCITY;
@@ -85,6 +83,8 @@ void update_ufo(Ufo *u,float delta){
 }
 
 void draw_ufo(Ufo *u){
+  if(!u->active){ return; }
+
   glPushMatrix();
     glTranslated(u->x,u->y,u->z);
     glRotated(90.0,-1.0,0.0,0.0);
@@ -100,7 +100,7 @@ void spawn_ufo(Ufo *u,float &ufo_time, int points){
   if (!u->active){
     //tenta spwanar uma nave a cada 5 segundos
     if(ufo_time >= 5.0f){
-      const int SPAWN_CHANCE = 80;//6%
+      const int SPAWN_CHANCE = 50;//6%
       if(rand() % 100 < SPAWN_CHANCE){
         init_ufo(u,points);
       }
@@ -118,7 +118,7 @@ void ufo_shot(std::vector<Bullet> &ufo_proj, Ufo *u, Player *p){
   //se o ufo for do tipo grande atira aleatoriamente 
   if(u->type == BIG_UFO){
     int random_angle = rand() % 360;
-    float Bufo_angle = (float)random_angle * (PI/ANGULAR_VEL);
+    float Bufo_angle = (float)random_angle * (PI/180.0f);
     shot_dirx = -sinf(Bufo_angle);
     shot_diry = cosf(Bufo_angle);
   }else{
@@ -163,12 +163,12 @@ void draw_ufo_bullet(std::vector<Bullet> &ufo_proj){
   for (const auto& bullet : ufo_proj){
     glPushMatrix();
       glDisable(GL_TEXTURE_2D);
-      glColor3f(0.0f,0.0f,1.0f);
+      glColor3f(1.0f,0.0f,0.0f);
       glTranslated(bullet.x,bullet.y,bullet.z);
       glRotatef(90.0,-1.0,0.0,0.0);
       glPointSize(4.0f);
       glBegin(GL_POINTS);
-      glVertex3f(0.3f,1.0f,0.7f);
+      glVertex3f(0.0f,0.0f,0.0f);
       glEnd();
       glEnable(GL_TEXTURE_2D);
     glPopMatrix();

@@ -70,7 +70,7 @@ void updateMeteors(std::vector<Meteor>* meteors, float deltaTime) {
         if (m.x > WRAP_X) m.x = -WRAP_X;
         if (m.x < -WRAP_X) m.x = WRAP_X;
         if (m.y > WRAP_Y) m.y = -WRAP_Y;
-        if (m.y < -WRAP_Y) m.y = -WRAP_Y;
+        if (m.y < -WRAP_Y) m.y = WRAP_Y;
     }
 }
 
