@@ -31,6 +31,8 @@ typedef struct{
     float Vx,Vy,Vz; 
 } Bullet;
 
+//variaveis para os menus 
+enum Gamestates{MENU = 0, PLAYING, GAME_OVER};
 //constantes
 const float ANGULAR_VEL = 360.0f;
 const float PI = 3.1415926f;

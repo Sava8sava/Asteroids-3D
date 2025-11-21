@@ -11,6 +11,7 @@
     #include <GL/freeglut.h>
     #include <GL/freeglut_std.h>
 #endif
+#include "types.h"
 
 #define ESC 27
 #define SPACEBAR ' '
@@ -19,11 +20,11 @@
 void init_opengl(void);
 void init_window(int argc, char** argv);
 void keyboard(unsigned char key, int x, int y);
+void keyboard_release(unsigned char key, int x, int y);
 void key_press(int key, int x, int y);
 void key_release(int key, int x, int y);
 void display(void);
 void reshape_win(int w, int h);
-
 //declaração das funçoes de janela relaciada a logica do jogo 
 void update_game(void);
 void draw_game(void);

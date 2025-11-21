@@ -8,6 +8,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define ENTER 13
+
 void init_opengl(void){
     glClearColor(1.0,1.0,1.0,1.0);
     glEnable(GL_DEPTH_TEST);
@@ -35,7 +37,7 @@ void init_window(int argc, char** argv){
     glutDisplayFunc(display);
     glutReshapeFunc(reshape_win);
     glutKeyboardFunc(keyboard);
-    //glutKeyboardUpFunc(key_release);
+    glutKeyboardUpFunc(keyboard_release);
     glutSpecialFunc(key_press);
     glutSpecialUpFunc(key_release);
     glutIdleFunc(update_game);
@@ -44,7 +46,7 @@ void init_window(int argc, char** argv){
 void keyboard(unsigned char key, int x, int y){
     switch(key){
     case ESC: exit(EXIT_SUCCESS); break;
-
+    case ENTER: enter_key_pressed = true; break;
     case SPACEBAR: spacekey = true; break;
     }
     glutPostRedisplay();
@@ -52,7 +54,9 @@ void keyboard(unsigned char key, int x, int y){
 
 void keyboard_release(unsigned char key, int x, int y){
     switch(key){
-    case SPACEBAR: spacekey = false;
+    case ENTER :
+      enter_key_pressed = false; break;
+    case SPACEBAR: spacekey = false; break;
     }
     glutPostRedisplay();
 }
@@ -70,10 +74,10 @@ void display(void){
 }
 
 void reshape_win(int w, int h){
+    glViewport(0,0, (GLsizei) w, (GLsizei) h);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     
-    glViewport(0,0, (GLsizei) w, (GLsizei) h);
     //projecão perspectiva 
     gluPerspective(60, (float)w/(float)h, 1.0, 100.0f);
     

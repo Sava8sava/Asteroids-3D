@@ -12,6 +12,9 @@
 #include <vector> 
 #include <cstdlib>
 
+Gamestates current_state = MENU;
+bool enter_key_pressed = false;
+
 Player player;
 //Lista global de meteoros
 std::vector<Meteor> meteors;
@@ -66,55 +69,76 @@ void check_collisions_Player_meteor(Player *p) {
     }
 }
 int cont = 0;
-//pequeno teste que move a nave pela janela 
+
+//refatorar 
 void update_game(void){
-    if(is_player_alive(&player)){
-      cont++;
-      if (cont % 9000 == 0) {
-          // progressão de dificuldade papai
-          int new_count = 1 + (points / 5000);
-          for(int i = 0; i < new_count; i++){
-              Meteor m;
-              respawnMeteor(&m); // Cria nas bordas
-              meteors.push_back(m); // Adiciona à lista existente
-          }
+  switch (current_state) {
+    case MENU:
+      if(enter_key_pressed){
+        reset_game();
+        current_state = PLAYING;
+        enter_key_pressed = false;
       }
+      break;
 
-      calculate_delta();
-      move_player(&player,delta);
-      updateMeteors(&meteors, delta);
-      
-
-      ufo_time += delta;
-      spawn_ufo(&Zorg,ufo_time,points);
-
-      if(Zorg.active){
-        //printf("zorg ativo");
-        update_ufo(&Zorg,delta);
-        Zorg.shoot_timer += delta;
-        if(Zorg.shoot_timer >= Zorg.shoot_interval){
-          ufo_shot(ufo_projectiles,&Zorg,&player);
+    case PLAYING:
+      if(is_player_alive(&player)){
+        cont++;
+        if (cont % 9000 == 0) {
+            // progressão de dificuldade papai
+            int new_count = 1 + (points / 5000);
+            for(int i = 0; i < new_count; i++){
+                Meteor m;
+                respawnMeteor(&m); // Cria nas bordas
+                meteors.push_back(m); // Adiciona à lista existente
+            }
         }
-      }
-       
-      if(spacekey){
-        player_shot(projectiles,&player);
-        spacekey = false;
-      }
 
-      update_bullets(projectiles,delta);
-      update_ufo_bullets(ufo_projectiles,delta);
-      check_P_bullet_ufo_collisions(&Zorg,points);
-      check_U_bullet_player_collisions(&Zorg,&player);
-      check_bullet_meteor_collisions();
-      check_collisions_Player_meteor(&player);
-      
-      
-      fps_counter();
-    }else{
-      printf("It's over, sobra nada para nave betinha");
-      glutLeaveMainLoop();
-    }
+        calculate_delta();
+        move_player(&player,delta);
+        updateMeteors(&meteors, delta);
+        
+
+        ufo_time += delta;
+        spawn_ufo(&Zorg,ufo_time,points);
+
+        if(Zorg.active){
+          //printf("zorg ativo");
+          update_ufo(&Zorg,delta);
+          Zorg.shoot_timer += delta;
+          if(Zorg.shoot_timer >= Zorg.shoot_interval){
+            ufo_shot(ufo_projectiles,&Zorg,&player);
+          }
+        }
+         
+        if(spacekey){
+          player_shot(projectiles,&player);
+          spacekey = false;
+        }
+
+        update_bullets(projectiles,delta);
+        update_ufo_bullets(ufo_projectiles,delta);
+        check_P_bullet_ufo_collisions(&Zorg,points);
+        check_U_bullet_player_collisions(&Zorg,&player);
+        check_bullet_meteor_collisions();
+        check_collisions_Player_meteor(&player);
+        
+        
+        fps_counter();
+      }else{
+        printf("It's over, sobra nada para nave betinha");
+        //glutLeaveMainLoop();
+        current_state = GAME_OVER;
+
+      }
+      break ;
+    case GAME_OVER:
+      if(enter_key_pressed){
+        current_state = MENU;
+        enter_key_pressed = false;
+      }
+      break;
+  }
   //solicita ao glut que a tela seja redesenhada 
   glutPostRedisplay();
 }
@@ -143,14 +167,27 @@ void draw_background() {
 }
 
 void draw_game(void){
-  draw_background();
-  drawMeteors(&meteors);
-  draw_player(&player);
-  draw_ufo(&Zorg);
-  draw_bullet(projectiles);
-  draw_ufo_bullet(ufo_projectiles);
-}
+  //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Limpa o buffer de desenho
+  //glLoadIdentity();
 
+  switch (current_state) {
+    case MENU:
+      draw_menu();
+      break;
+    case PLAYING:
+      draw_background();
+      drawMeteors(&meteors);
+      draw_player(&player);
+      draw_ufo(&Zorg);
+      draw_bullet(projectiles);
+      draw_ufo_bullet(ufo_projectiles);
+      break;
+    case GAME_OVER:
+      draw_gameover();
+      break;
+    }
+  //glutSwapBuffers();
+}
 void init_desenhoMeteoro(){
   initMeteors(&meteors, 10);
   return;
@@ -294,4 +331,49 @@ void check_U_bullet_player_collisions(Ufo *u, Player *p) {
           i++;
     }
   }
+}
+
+void reset_game(){
+    points = 0;
+    ufo_time = 0.0f;
+    cont = 0; 
+    // Limpa os vetores de objetos
+    meteors.clear();
+    projectiles.clear();
+    ufo_projectiles.clear();
+    
+    init_player_var(&player);     
+    init_desenhoMeteoro();     
+    Zorg.active = false;
+}
+
+void draw_text(float x, float y, const char *string, float r, float g, float b) {
+    glDisable(GL_LIGHTING);
+    glDisable(GL_TEXTURE_2D);
+    glColor3f(r, g, b);
+    glPushMatrix();
+        glTranslatef(x, y, 0.0f);
+        glScalef(0.1f, 0.1f, 0.1f); 
+        for (const char *c = string; *c != '\0'; c++) {
+          //igual na idade da pedra lascada   
+          glutStrokeCharacter(GLUT_STROKE_ROMAN, *c);
+        }
+    glPopMatrix();
+    glEnable(GL_TEXTURE_2D);
+    glEnable(GL_LIGHTING);
+}
+
+void draw_menu() {
+    draw_background();
+    draw_text(-30.0f, 10.0f, "ASTEROIDS CLONE", 1.0f, 1.0f, 1.0f);
+    draw_text(-20.0f, -10.0f, "PRESS ENTER TO START", 0.0f, 1.0f, 0.0f);
+}
+
+void draw_gameover() {
+    draw_background(); 
+    draw_text(-20.0f, 10.0f, "GAME OVER", 1.0f, 0.0f, 0.0f);
+    char score_text[50];
+    sprintf(score_text, "FINAL SCORE: %d", points);
+    draw_text(-25.0f, -5.0f, score_text, 1.0f, 1.0f, 1.0f);
+    draw_text(-20.0f, -20.0f, "PRESS ENTER TO RESTART", 0.0f, 1.0f, 0.0f);
 }
