@@ -16,10 +16,10 @@ void init_opengl(void){
 
     glEnable(GL_TEXTURE_2D);
 
-    playerTexture = loadTexture("nave.jpg");
-    meteorTexture = loadTexture("meteoro.jpg");
-    propulsorTexture = loadTexture("nave_propulsao.jpg");
-    backTexture = loadTexture("netespaco1.jpg");
+    playerTexture = loadTexture("Texturas/nave.jpg");
+    meteorTexture = loadTexture("Texturas/meteoro.jpg");
+    propulsorTexture = loadTexture("Texturas/nave_propulsao.jpg");
+    backTexture = loadTexture("Texturas/netespaco1.jpg");
 
 }
 
@@ -64,6 +64,7 @@ void keyboard_release(unsigned char key, int x, int y){
 void display(void){
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
+
     //LOGICA DO JOGO APLICADO AQUI 
     draw_game();
 
@@ -119,3 +120,4 @@ void key_release(int key, int x, int y){
       
     }
 }
+

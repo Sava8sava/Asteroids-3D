@@ -28,5 +28,4 @@ void reshape_win(int w, int h);
 //declaração das funçoes de janela relaciada a logica do jogo 
 void update_game(void);
 void draw_game(void);
-
 #endif

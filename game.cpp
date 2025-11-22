@@ -4,6 +4,7 @@
 #include "meteor.h"
 #include "player.h"
 #include "Ufo.h"
+#include "window.h"
 #include <GL/freeglut_std.h>
 #include <GL/gl.h>
 #include <stdlib.h>
@@ -12,6 +13,7 @@
 #include <vector> 
 #include <cstdlib>
 
+//BUG: os meteoros ja spawan muito proximo ao player ao começar o jogo 
 Gamestates current_state = MENU;
 bool enter_key_pressed = false;
 
@@ -167,8 +169,6 @@ void draw_background() {
 }
 
 void draw_game(void){
-  //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Limpa o buffer de desenho
-  //glLoadIdentity();
 
   switch (current_state) {
     case MENU:
@@ -348,25 +348,25 @@ void reset_game(){
 }
 
 void draw_text(float x, float y, const char *string, float r, float g, float b) {
-    glDisable(GL_LIGHTING);
-    glDisable(GL_TEXTURE_2D);
+    //glDisable(GL_LIGHTING);
+    //glDisable(GL_TEXTURE_2D);
     glColor3f(r, g, b);
     glPushMatrix();
-        glTranslatef(x, y, 0.0f);
-        glScalef(0.1f, 0.1f, 0.1f); 
+        glTranslatef(x, y, -10.0f);
+        glScalef(0.01f, 0.01f, 0.01f); 
         for (const char *c = string; *c != '\0'; c++) {
           //igual na idade da pedra lascada   
           glutStrokeCharacter(GLUT_STROKE_ROMAN, *c);
         }
     glPopMatrix();
-    glEnable(GL_TEXTURE_2D);
-    glEnable(GL_LIGHTING);
+    //glEnable(GL_TEXTURE_2D);
+    //glEnable(GL_LIGHTING);
 }
 
 void draw_menu() {
     draw_background();
-    draw_text(-30.0f, 10.0f, "ASTEROIDS CLONE", 1.0f, 1.0f, 1.0f);
-    draw_text(-20.0f, -10.0f, "PRESS ENTER TO START", 0.0f, 1.0f, 0.0f);
+    draw_text(-7.0f, 2.5f, "ASTEROIDS CLONE", 1.0f, 0.0f, 0.0f);
+    draw_text(-8.0f, -2.5f, "PRESS ENTER TO START", 1.0f,0.0f,0.0f);
 }
 
 void draw_gameover() {
