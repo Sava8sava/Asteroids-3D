@@ -20,6 +20,7 @@ void init_opengl(void){
     meteorTexture = loadTexture("Texturas/meteoro.jpg");
     propulsorTexture = loadTexture("Texturas/nave_propulsao.jpg");
     backTexture = loadTexture("Texturas/netespaco1.jpg");
+    ufoTexture = loadTexture("Texturas/nave.jpg");
 
 }
 

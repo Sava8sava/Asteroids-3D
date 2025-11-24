@@ -110,6 +110,7 @@ void update_game(void){
           Zorg.shoot_timer += delta;
           if(Zorg.shoot_timer >= Zorg.shoot_interval){
             ufo_shot(ufo_projectiles,&Zorg,&player);
+            Zorg.shoot_timer = 0.0f;
           }
         }
          
@@ -211,7 +212,7 @@ void fps_counter(){
 void calculate_delta(){
   float curr_delta = glutGet(GLUT_ELAPSED_TIME);
   delta = (curr_delta - prev_delta)/1000.0f;
-  if(delta < 0.0033f) delta = 0.0033f; //limita o jogo a 300fps
+  delta = 0.0033f; //limita o jogo a 300fps
   prev_delta = curr_delta;
 }
 

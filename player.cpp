@@ -2,6 +2,7 @@
 #include <math.h>
 #include "player.h"
 #include "texture.h"
+#include "model.h"
 #include <GL/freeglut_std.h>
 #include <GL/gl.h>
 #include <vector>
@@ -17,6 +18,9 @@ bool rot_left = 0;
 bool rot_right = 0;
 bool spacekey = 0;
 
+Model playerShip;
+bool shipLoaded = false;
+
 void init_player_var(Player *p){
     p->x = 0.0f; 
     p->y = 0.0f; 
@@ -28,6 +32,16 @@ void init_player_var(Player *p){
     p->accel = 20.0f; 
     p->damping_rate = 0.95f;
     p->lives = PLAYER_LIVES;
+
+    if (!shipLoaded) {
+        if (playerShip.load("models/Spaceship/13886_UFO_V1_l2.obj")) {
+            // playerShip.overrideTexture(playerTexture);
+            GLuint TextID = loadTexture("models/Spaceship/13886_UFO_diffuse.jpg");
+            playerShip.overrideTexture(TextID);
+            shipLoaded = true;
+            playerShip.setScale(0.6f); // ajustar tamanho da nave
+        }
+    }
 }
 
 void reset_player(Player *p){
@@ -43,9 +57,21 @@ void draw_player(Player *p){
   glPushMatrix();
       glTranslated(p->x,p->y,p->z);
       glRotatef(p->rotation,0.0,0.0,1.0);
-      glRotatef(90.0,-1.0,0.0,0.0);
-      glColor3f(1.0,0.0,1.0);
-      draw_spaceship(p->size);
+      // glRotatef(90.0,-1.0,0.0,0.0);
+      // glColor3f(1.0,0.0,1.0);
+      // draw_spaceship(p->size);
+
+      // se tiver virado errado, só ajustar aqui
+      glRotatef(90.0, 0.0, 0.0, 1.0);
+      glRotatef(180.0, 0.0, 1.0, 0.0); // gira 180 graus se a nave tiver de costas
+
+      if (shipLoaded) {
+          playerShip.draw();
+      } else {
+          // desenha a pirâmide se der errado
+          glColor3f(1.0, 0.0, 1.0);
+          draw_spaceship(p->size);
+      }
   glPopMatrix();
 
 }
@@ -160,8 +186,8 @@ void move_player(Player *p, float delta){
     if (p->rotation > 360.0f) p->rotation -= 360.0f;
     if (p->rotation < 0.0f) p->rotation += 360.0f;
     
-    const float WRAP_X = BOUNDARY_X + 1.0f;
-    const float WRAP_Y = BOUNDARY_Y + 1.0f;
+    const float WRAP_X = 7.0f + 0.5f; //Limite visível + margem
+    const float WRAP_Y = 5.2f + 0.5f;
     
     if (p->x > WRAP_X) p->x = -WRAP_X;
     if (p->x < -WRAP_X) p->x = WRAP_X;

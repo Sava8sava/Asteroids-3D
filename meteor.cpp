@@ -1,9 +1,13 @@
 // meteor.cpp
 #include "meteor.h"
 #include "texture.h"
+#include "model.h"
 #include <cmath>
 #include <cstdlib>
 #include <stdio.h>
+
+Model asteroidModel;
+bool isAstLoaded;
 
 float randRange(float min, float max) {
     return min + static_cast<float>(rand()) / (RAND_MAX / (max - min));
@@ -39,6 +43,15 @@ void respawnMeteor(Meteor* m){
 }
 
 void initMeteors(std::vector<Meteor>* meteors, int count) {
+    if (!isAstLoaded) {
+        if (asteroidModel.load("models/10464_Asteroid_L3.123c72035d71-abea-4a34-9131-5e9eeeffadcb/10464_Asteroid_v1_Iterations-2.obj")) {
+            isAstLoaded = true;
+            asteroidModel.overrideTexture(meteorTexture); 
+            printf("Modelo do asteroide carregado com sucesso!\n");
+        } else {
+            printf("Falha ao carregar modelo do asteroide.\n");
+        }
+    }
     meteors->clear();
     meteors->reserve(count);
     for (int i = 0; i < count; i++) {
@@ -75,11 +88,11 @@ void updateMeteors(std::vector<Meteor>* meteors, float deltaTime) {
 }
 
 void drawMeteors(const std::vector<Meteor>* meteors) {
-    GLUquadric* quadric = gluNewQuadric();
-    gluQuadricTexture(quadric, GL_TRUE);
-    gluQuadricNormals(quadric, GLU_SMOOTH);
+    // GLUquadric* quadric = gluNewQuadric();
+    // gluQuadricTexture(quadric, GL_TRUE);
+    // gluQuadricNormals(quadric, GLU_SMOOTH);
 
-    glBindTexture(GL_TEXTURE_2D, meteorTexture);
+    // glBindTexture(GL_TEXTURE_2D, meteorTexture);
     glColor3f(1.0f, 1.0f, 1.0f);
     for (size_t i = 0; i < meteors->size(); ++i) {
         const Meteor &m = (*meteors)[i];
@@ -94,12 +107,20 @@ void drawMeteors(const std::vector<Meteor>* meteors) {
 
         glPushMatrix();
             glTranslatef(m.x, m.y, m.z);
-            glRotatef(m.rotation, 0.0f, 1.0f, 0.0f);
-            gluSphere(quadric, m.size, 16, 16);
+            glRotatef(m.rotation, 1.0f, 1.0f, 1.0f);
+            // gluSphere(quadric, m.size, 16, 16);
+            float vSize = m.size;
+            glScalef(vSize, vSize, vSize);
+            if(isAstLoaded){
+                asteroidModel.draw();
+            }
+            else{
+                glutSolidSphere(0.5, 10, 10);
+            }
         glPopMatrix();
     }
 
-    gluDeleteQuadric(quadric);
+    // gluDeleteQuadric(quadric);
 }
 
 void splitMeteor(std::vector<Meteor>* meteors, Meteor parent) {
@@ -118,13 +139,13 @@ void splitMeteor(std::vector<Meteor>* meteors, Meteor parent) {
 
         smallM.size = parent.size * 0.5f;
 
-        float spread = 1.5f;
+        float spread = 3.0f;
         smallM.vx = parent.vx + randRange(-spread, spread); // Usa a função interna do arquivo!
         smallM.vy = parent.vy + randRange(-spread, spread);
         smallM.vz = parent.vz + randRange(8.0f, 12.0f); // Mantém padrão ou varia
 
         smallM.rotation = randRange(0.0f, 360.0f);
-        smallM.rotSpeed = randRange(-4.0f, 4.0f);
+        smallM.rotSpeed = randRange(-50.0f, 50.0f);
 
         meteors->push_back(smallM);
     }
