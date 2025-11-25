@@ -1,7 +1,7 @@
 # Lista (não esta ordenado)
 1- movimento - check 
 2- acões do jogador - check
-3- meteoros - falta a sub divisão 
+3- meteoros - falta a sub divisão - check
 4- colisões 
 5- ufos 
 6- modelos e animações 
