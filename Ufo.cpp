@@ -3,6 +3,8 @@
 #include <cmath>
 #include "Ufo.h"
 #include "types.h"
+#include "model.h"
+#include "texture.h"
 #include <GL/freeglut_std.h>
 #include <GL/gl.h>
 
@@ -14,6 +16,8 @@ const float BULLET_SPEED = 2.0f;
 const float MAX_PRJCT_DISTANCE = 10.0f; 
 const int MAX_PROJECTILES = 3;
 
+Model ufoModel;
+bool isUfoLoaded = false;
 
 //gambiarra,ajeitar depois
 float _randRange(float min, float max) {
@@ -21,7 +25,7 @@ float _randRange(float min, float max) {
 }
 
 Ufos_types ufo_spawn_prob(int points){
-  // de 30k pra cima apenas mini ufos aparecem 
+  // de 30k pra baixo apenas mini ufos aparecem 
   if (points < 30000){
     const int LIL_PROB = 10;
     int roll = rand() % 100;
@@ -85,13 +89,36 @@ void update_ufo(Ufo *u,float delta){
 void draw_ufo(Ufo *u){
   if(!u->active){ return; }
 
+  if (!isUfoLoaded) {
+      // COLOQUE O ARQUIVO 'ufo.obj' NA PASTA CORRETA
+      if (ufoModel.load("models/Round_50s_Flying_Saucer_v1_L3.123cfa4a1570-edd0-4f74-8357-4d26f62cc3a1/10476_Round_50s_Flying_Saucer_v1_L3.obj")) {
+          isUfoLoaded = true;
+          ufoModel.overrideTexture(ufoTexture);
+          printf("Modelo UFO carregado!\n");
+      } else {
+          // Se falhar, avisa no console apenas uma vez para não spammar
+          bool warned = false;
+          if(!warned) { printf("Falha ao carregar ufo.obj, usando cubo.\n"); warned = true; }
+      }
+  }
+
   glPushMatrix();
     glTranslated(u->x,u->y,u->z);
-    glRotated(90.0,-1.0,0.0,0.0);
-    glDisable(GL_TEXTURE_2D);//correção feita pra n escurecer o ovni
-    glColor3f(0.0,1.0,0.5);
-    glutSolidCube(u->size);
-    glEnable(GL_TEXTURE_2D);
+    // glRotated(90.0,-1.0,0.0,0.0);
+    glRotated(180.0,-1.0,0.0,0.0);
+
+    if (isUfoLoaded) {
+        float scale = u->size;
+        glScalef(scale, scale, scale);
+
+        glColor3f(1.0f, 1.0f, 1.0f); // Branco para não tingir a textura original do modelo
+        ufoModel.draw();
+    } else {
+        glDisable(GL_TEXTURE_2D);
+        glColor3f(0.0, 1.0, 0.5);
+        glutSolidCube(u->size);
+        glEnable(GL_TEXTURE_2D);
+    }
   glPopMatrix();
 
 }
