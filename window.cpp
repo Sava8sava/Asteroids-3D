@@ -20,7 +20,7 @@ void init_opengl(void){
     meteorTexture = loadTexture("Texturas/meteoro.jpg");
     propulsorTexture = loadTexture("Texturas/nave_propulsao.jpg");
     backTexture = loadTexture("Texturas/netespaco1.jpg");
-    ufoTexture = loadTexture("Texturas/nave.jpg");
+    ufoTexture = loadTexture("models/Round_50s_Flying_Saucer_v1_L3.123cfa4a1570-edd0-4f74-8357-4d26f62cc3a1/10476_Round_50s_Flying_Saucer_v1_Diffuse.jpg");
 
 }
 

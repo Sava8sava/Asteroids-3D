@@ -53,6 +53,24 @@ void reset_player(Player *p){
     p->lives -= 1;
 }
 
+void draw_engine_exhaust(float size) {
+    glBindTexture(GL_TEXTURE_2D, propulsorTexture);
+    float flicker = (rand() % 10) / 20.0f;
+    float fireLen = size * (0.8f + flicker);
+    float width = size * 0.3f;
+
+    glBegin(GL_TRIANGLES);
+        glTexCoord2f(0.0f, 0.0f); glVertex3f(-width, 0.0f, 0.0f);
+        glTexCoord2f(1.0f, 0.0f); glVertex3f(width, 0.0f, 0.0f);
+        glTexCoord2f(0.5f, 1.0f); glVertex3f(0.0f, 0.0f, -fireLen);
+
+        glTexCoord2f(0.0f, 0.0f); glVertex3f(0.0f, -width, 0.0f);
+        glTexCoord2f(1.0f, 0.0f); glVertex3f(0.0f, width, 0.0f);
+        glTexCoord2f(0.5f, 1.0f); glVertex3f(0.0f, 0.0f, -fireLen);
+    glEnd();
+    glColor3f(1.0, 1.0, 1.0); 
+}
+
 void draw_player(Player *p){
   glPushMatrix();
       glTranslated(p->x,p->y,p->z);
@@ -61,12 +79,20 @@ void draw_player(Player *p){
       // glColor3f(1.0,0.0,1.0);
       // draw_spaceship(p->size);
 
-      // se tiver virado errado, só ajustar aqui
-      glRotatef(90.0, 0.0, 0.0, 1.0);
-      glRotatef(180.0, 0.0, 1.0, 0.0); // gira 180 graus se a nave tiver de costas
-
       if (shipLoaded) {
-          playerShip.draw();
+              glPushMatrix();
+                // se tiver virado errado, só ajustar aqui
+                glRotatef(90.0, 0.0, 0.0, 1.0);
+                glRotatef(180.0, 0.0, 1.0, 0.0); // gira 180 graus se a nave tiver de costas
+                playerShip.draw();
+              glPopMatrix();
+          if(up){
+            glPushMatrix();
+            glTranslatef(0.0f, -0.2f, 0.0f);
+            glRotatef(-90.0, 1.0, 0.0, 0.0);
+            draw_engine_exhaust(p->size);
+            glPopMatrix();
+          }
       } else {
           // desenha a pirâmide se der errado
           glColor3f(1.0, 0.0, 1.0);

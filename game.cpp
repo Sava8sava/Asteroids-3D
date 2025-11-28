@@ -5,6 +5,7 @@
 #include "player.h"
 #include "Ufo.h"
 #include "window.h"
+#include "particle.h"
 #include <GL/freeglut_std.h>
 #include <GL/gl.h>
 #include <stdlib.h>
@@ -12,7 +13,6 @@
 #include <math.h>
 #include <vector> 
 #include <cstdlib>
-
 //BUG: os meteoros ja spawan muito proximo ao player ao começar o jogo 
 Gamestates current_state = MENU;
 bool enter_key_pressed = false;
@@ -37,6 +37,9 @@ static float fps = 0.0f;
 static int points = 0;
 
 static float ufo_time = 0.0f;
+
+//partículas de explosão
+std::vector<Particle> particles;
 
 void init_game_objs(){
     //player properties
@@ -65,6 +68,7 @@ void check_collisions_Player_meteor(Player *p) {
 
         if (distSq < sumRadiiSq) {
             // barruou
+            spawn_explosion(p->x, p->y, p->z);
             reset_player(&player);
             respawnMeteor(&m);
         }
@@ -99,7 +103,7 @@ void update_game(void){
         calculate_delta();
         move_player(&player,delta);
         updateMeteors(&meteors, delta);
-        
+        update_particles(delta);
 
         ufo_time += delta;
         spawn_ufo(&Zorg,ufo_time,points);
@@ -177,11 +181,18 @@ void draw_game(void){
       break;
     case PLAYING:
       draw_background();
+      // glEnable(GL_LIGHTING);
+      glEnable(GL_TEXTURE_2D);
+      // glEnable(GL_COLOR_MATERIAL);
+      // glColor3f(1.0f, 1.0f, 1.0f);
+
+
       drawMeteors(&meteors);
       draw_player(&player);
       draw_ufo(&Zorg);
       draw_bullet(projectiles);
       draw_ufo_bullet(ufo_projectiles);
+      draw_particles();
       break;
     case GAME_OVER:
       draw_gameover();
@@ -241,6 +252,8 @@ void check_bullet_meteor_collisions() {
               bullet_hit = true;
               points += 100;
 
+              spawn_explosion(m.x, m.y, m.z);
+
               Meteor hitMeteor = m;
 
               if (j < meteors.size() - 1){
@@ -291,7 +304,7 @@ void check_P_bullet_ufo_collisions(Ufo *u, int &points) {
           }else{
             points += 500;
           }
-          
+          spawn_explosion(u->x, u->y, u->z);
           u->active = false;
           projectiles[i] = projectiles.back();
           projectiles.pop_back();
@@ -326,6 +339,7 @@ void check_U_bullet_player_collisions(Ufo *u, Player *p) {
         float sumRadiiSq = sumRadii * sumRadii;
 
         if (distSq < sumRadiiSq) {
+          spawn_explosion(p->x, p->y, p->z);
           reset_player(p);
           ufo_projectiles[i] = ufo_projectiles.back();
           ufo_projectiles.pop_back();
@@ -343,7 +357,7 @@ void reset_game(){
     meteors.clear();
     projectiles.clear();
     ufo_projectiles.clear();
-    
+    particles.clear();
     init_player_var(&player);     
     init_desenhoMeteoro();     
     Zorg.active = false;
