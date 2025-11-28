@@ -182,6 +182,7 @@ void draw_game(void){
       draw_ufo(&Zorg);
       draw_bullet(projectiles);
       draw_ufo_bullet(ufo_projectiles);
+      draw_gui();
       break;
     case GAME_OVER:
       draw_gameover();
@@ -378,4 +379,14 @@ void draw_gameover() {
     sprintf(score_text, "FINAL SCORE: %d", points);
     draw_text(-25.0f, -5.0f, score_text, 1.0f, 1.0f, 1.0f);
     draw_text(-20.0f, -20.0f, "PRESS ENTER TO RESTART", 0.0f, 1.0f, 0.0f);
+}
+
+void draw_gui(){
+  char score_text[32];
+  sprintf(score_text,"Score %d",points);
+  draw_text(-13.0f,9.0f,score_text,1.0f,1.0f,1.0f);
+
+  char lives_text[32];
+  sprintf(lives_text,"Lives %d",player.lives);
+  draw_text(7.0f,9.0f,lives_text,1.0f,1.0f,1.0f);
 }

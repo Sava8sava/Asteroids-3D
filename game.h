@@ -7,6 +7,7 @@
 void draw_text(float x, float y, const char *string, float r,float g, float b);
 void draw_menu();
 void draw_gameover();
+void draw_gui();
 void reset_game();
 extern Gamestates current_state;
 extern bool enter_key_pressed;

@@ -7,7 +7,7 @@
 #include <GL/gl.h>
 #include <vector>
 
-#define BULLET_SPEED 10.0f
+#define BULLET_SPEED 20.0f
 #define MAX_PROJECTILES 5
 #define MAX_PRJCT_DISTANCE 10.0f
 #define PLAYER_SIZE 0.5f
@@ -29,7 +29,7 @@ void init_player_var(Player *p){
     p->size = PLAYER_SIZE; 
     p->vx = 0.0f;
     p->vy = 0.0f;
-    p->accel = 20.0f; 
+    p->accel = 85.0f; 
     p->damping_rate = 0.95f;
     p->lives = PLAYER_LIVES;
 
