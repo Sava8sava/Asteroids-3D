@@ -16,11 +16,30 @@ void init_opengl(void){
 
     glEnable(GL_TEXTURE_2D);
 
+    GLfloat light_pos[] = { 1.0f, 1.0f, 1.0f, 0.0f };
+
+    // Configurações de iluminação global
+    glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0);
+
+    GLfloat white_light[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+    GLfloat ambient_light[] = { 0.7f, 0.7f, 0.7f, 1.0f };
+
+    glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, white_light);
+    glLightfv(GL_LIGHT0, GL_SPECULAR, white_light);
+    glLightfv(GL_LIGHT0, GL_AMBIENT, ambient_light);
+
+    glEnable(GL_COLOR_MATERIAL);
+    glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+
+    glEnable(GL_NORMALIZE);
+
     playerTexture = loadTexture("Texturas/nave.jpg");
     meteorTexture = loadTexture("Texturas/meteoro.jpg");
     propulsorTexture = loadTexture("Texturas/nave_propulsao.jpg");
-    backTexture = loadTexture("Texturas/netespaco1.jpg");
-    ufoTexture = loadTexture("Texturas/nave.jpg");
+    backTexture = loadTexture("Texturas/netespaco2.jpg");
+    ufoTexture = loadTexture("models/Round_50s_Flying_Saucer_v1_L3.123cfa4a1570-edd0-4f74-8357-4d26f62cc3a1/10476_Round_50s_Flying_Saucer_v1_Diffuse.jpg");
 
 }
 
