@@ -6,6 +6,7 @@
 #include "Ufo.h"
 #include "window.h"
 #include "particle.h"
+#include "star.h"
 #include <GL/freeglut_std.h>
 #include <GL/gl.h>
 #include <stdlib.h>
@@ -43,7 +44,8 @@ std::vector<Particle> particles;
 
 void init_game_objs(){
     //player properties
-    init_player_var(&player);  
+    init_player_var(&player);
+    init_starfield();
     //Fps 
     previous_time = glutGet(GLUT_ELAPSED_TIME);
 }
@@ -102,6 +104,7 @@ void update_game(void){
 
         calculate_delta();
         move_player(&player,delta);
+        update_starfield(delta, player.vx, player.vy);
         updateMeteors(&meteors, delta);
         update_particles(delta);
 
@@ -180,11 +183,12 @@ void draw_game(void){
       draw_menu();
       break;
     case PLAYING:
+      glDisable(GL_LIGHTING); 
       draw_background();
-      // glEnable(GL_LIGHTING);
-      glEnable(GL_TEXTURE_2D);
+      draw_starfield();
+      glEnable(GL_LIGHTING);
       // glEnable(GL_COLOR_MATERIAL);
-      // glColor3f(1.0f, 1.0f, 1.0f);
+      glColor3f(1.0f, 1.0f, 1.0f);
 
 
       drawMeteors(&meteors);

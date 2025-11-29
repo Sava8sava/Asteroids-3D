@@ -25,6 +25,7 @@ void init_player_var(Player *p){
     p->x = 0.0f; 
     p->y = 0.0f; 
     p->z= 0.0f;
+    p->bank_angle = 0;
     p->rotation = 0.0f; 
     p->size = PLAYER_SIZE; 
     p->vx = 0.0f;
@@ -78,7 +79,7 @@ void draw_player(Player *p){
       // glRotatef(90.0,-1.0,0.0,0.0);
       // glColor3f(1.0,0.0,1.0);
       // draw_spaceship(p->size);
-
+      glRotatef(-p->bank_angle, 0.0, 1.0, 0.0);
       if (shipLoaded) {
               glPushMatrix();
                 // se tiver virado errado, só ajustar aqui
@@ -219,7 +220,24 @@ void move_player(Player *p, float delta){
     if (p->x < -WRAP_X) p->x = WRAP_X;
     if (p->y > WRAP_Y) p->y = -WRAP_Y;
     if (p->y < -WRAP_Y) p->y = WRAP_Y;
-  
+    
+    //Lógica pra inclinar a nave
+    float target_angle = 0.0f;
+    
+    if (rot_left) target_angle = 60.0f;  // esquerda
+    else if (rot_right) target_angle = -60.0f; // direita
+    
+    //velocidade
+    float bank_speed = 150.0f * delta; 
+    //interpolação
+    if (p->bank_angle < target_angle) {
+        p->bank_angle += bank_speed;
+        if (p->bank_angle > target_angle) p->bank_angle = target_angle;
+    } 
+    else if (p->bank_angle > target_angle) {
+        p->bank_angle -= bank_speed;
+        if (p->bank_angle < target_angle) p->bank_angle = target_angle;
+}
 }
 
 void player_shot(std::vector<Bullet> &proj,Player *p){
@@ -263,7 +281,8 @@ void draw_bullet(std::vector<Bullet> &proj){
   for (const auto& bullet : proj){
     glPushMatrix();
       glDisable(GL_TEXTURE_2D);
-      glColor3f(0.0f,0.0f,1.0f);
+      glDisable(GL_LIGHTING);
+      glColor3f(0.0f,0.5f,1.0f);
       glTranslated(bullet.x,bullet.y,bullet.z);
       glRotatef(90.0,-1.0,0.0,0.0);
       glPointSize(4.0f);
@@ -271,6 +290,7 @@ void draw_bullet(std::vector<Bullet> &proj){
         glVertex3f(0.0f,0.0f,0.0f);
       glEnd();
       glEnable(GL_TEXTURE_2D);
+      glEnable(GL_LIGHTING);
     glPopMatrix();
   }
 }

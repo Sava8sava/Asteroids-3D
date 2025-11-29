@@ -6,6 +6,16 @@
 #include <stdio.h>
 #include <GL/glut.h>
 #include <vector>
+#ifdef __APPLE__
+    #define GL_SILENCE_DEPRECATION
+    #include <GLUT/glut.h>
+    #include <OpenGL/gl.h>
+    #include <OpenGL/glu.h>
+#else
+    #include <GL/glut.h>
+    #include <GL/freeglut.h>
+    #include <GL/freeglut_std.h>
+#endif
 
 struct Particle {
     float x, y, z;      // Posição

@@ -44,7 +44,7 @@ void respawnMeteor(Meteor* m){
 
 void initMeteors(std::vector<Meteor>* meteors, int count) {
     if (!isAstLoaded) {
-        if (asteroidModel.load("models/10464_Asteroid_L3.123c72035d71-abea-4a34-9131-5e9eeeffadcb/10464_Asteroid_v1_Iterations-2.obj")) {
+        if (asteroidModel.load("models/rock_by_dommk/model/rock_by_dommk.obj")) {
             isAstLoaded = true;
             asteroidModel.overrideTexture(meteorTexture); 
             printf("Modelo do asteroide carregado com sucesso!\n");

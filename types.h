@@ -2,7 +2,16 @@
 #define TYPES_H
 
 #include <cstdint>
-
+#ifdef __APPLE__
+    #define GL_SILENCE_DEPRECATION
+    #include <GLUT/glut.h>
+    #include <OpenGL/gl.h>
+    #include <OpenGL/glu.h>
+#else
+    #include <GL/glut.h>
+    #include <GL/freeglut.h>
+    #include <GL/freeglut_std.h>
+#endif
 typedef struct{
   float x,y,z;
   float dx,dy;
@@ -19,6 +28,7 @@ enum Ufos_types{BIG_UFO = 0,LIL_UFO};
 typedef struct{
     float x,y,z;
     float rotation;
+    float bank_angle;
     float size;
     float vx,vy;
     float accel; 

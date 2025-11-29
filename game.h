@@ -3,6 +3,17 @@
 
 #include "types.h"
 
+#ifdef __APPLE__
+    #define GL_SILENCE_DEPRECATION
+    #include <GLUT/glut.h>
+    #include <OpenGL/gl.h>
+    #include <OpenGL/glu.h>
+#else
+    #include <GL/glut.h>
+    #include <GL/freeglut.h>
+    #include <GL/freeglut_std.h>
+#endif
+
 //menu
 void draw_text(float x, float y, const char *string, float r,float g, float b);
 void draw_menu();
