@@ -3,6 +3,16 @@
 #include <cstdint>
 #include "types.h"
 #include <vector>
+#ifdef __APPLE__
+    #define GL_SILENCE_DEPRECATION
+    #include <GLUT/glut.h>
+    #include <OpenGL/gl.h>
+    #include <OpenGL/glu.h>
+#else
+    #include <GL/glut.h>
+    #include <GL/freeglut.h>
+    #include <GL/freeglut_std.h>
+#endif
 /**
 O jogo original conta com dois tipos de inimigos:
 Big_ufos -> grande, lento e burro, atiram aleatoriamente 

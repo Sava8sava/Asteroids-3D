@@ -37,14 +37,14 @@ void respawnMeteor(Meteor* m){
     m->vy = (m->y > 0) ? randRange(-speed, -0.5f) : randRange(0.5f, speed);
     m->vz = 0.0f;
     m->rotation = randRange(0.0f, 360.0f);
-    m->rotSpeed = randRange(-4.0f, 4.0f);
+    m->rotSpeed = randRange(-100.0f, 100.0f);
     m->size = randRange(0.4f, 0.9f);
     m->active = true;
 }
 
 void initMeteors(std::vector<Meteor>* meteors, int count) {
     if (!isAstLoaded) {
-        if (asteroidModel.load("models/10464_Asteroid_L3.123c72035d71-abea-4a34-9131-5e9eeeffadcb/10464_Asteroid_v1_Iterations-2.obj")) {
+        if (asteroidModel.load("models/rock_by_dommk/model/rock_by_dommk.obj")) {
             isAstLoaded = true;
             asteroidModel.overrideTexture(meteorTexture); 
             printf("Modelo do asteroide carregado com sucesso!\n");
@@ -139,10 +139,10 @@ void splitMeteor(std::vector<Meteor>* meteors, Meteor parent) {
 
         smallM.size = parent.size * 0.5f;
 
-        float spread = 3.0f;
-        smallM.vx = parent.vx + randRange(-spread, spread); // Usa a função interna do arquivo!
+        float spread = 10.0f;
+        smallM.vx = parent.vx + randRange(-spread, spread);
         smallM.vy = parent.vy + randRange(-spread, spread);
-        smallM.vz = parent.vz + randRange(8.0f, 12.0f); // Mantém padrão ou varia
+        smallM.vz = parent.vz + randRange(8.0f, 12.0f);
 
         smallM.rotation = randRange(0.0f, 360.0f);
         smallM.rotSpeed = randRange(-50.0f, 50.0f);

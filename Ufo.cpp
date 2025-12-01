@@ -12,9 +12,9 @@ const float BIG_UFO_VELOCITY = 3.0f;
 const float BIG_UFO_SIZE = 0.8f;
 const float LIL_UFO_VELOCIY = 7.0f; 
 const float LIL_UFO_SIZE = 0.3f;
-const float BULLET_SPEED = 2.0f;
-const float MAX_PRJCT_DISTANCE = 10.0f; 
-const int MAX_PROJECTILES = 3;
+const float BULLET_SPEED = 7.0f;
+const float MAX_PRJCT_DISTANCE = 20.0f; 
+const int MAX_PROJECTILES = 5;
 
 Model ufoModel;
 bool isUfoLoaded = false;
@@ -42,7 +42,7 @@ Ufos_types ufo_spawn_prob(int points){
 void init_ufo(Ufo *u, int points){
   u->type = ufo_spawn_prob(points);
   u->shoot_timer = 0.0f;
-  u->shoot_interval = 5.0f;
+  u->shoot_interval = 2.0f;
   if(u->type == 0){
     u->size = BIG_UFO_SIZE;
     u->velocity = BIG_UFO_VELOCITY;
@@ -68,8 +68,8 @@ void init_ufo(Ufo *u, int points){
 }
 
 void update_ufo(Ufo *u,float delta){
-  const float WRAP_X = BOUNDARY_X + 4.0f;
-  const float WRAP_Y = BOUNDARY_Y + 4.0f;
+  // const float WRAP_X = BOUNDARY_X + 4.0f;
+  // const float WRAP_Y = BOUNDARY_Y + 4.0f;
   const float DESPAWN_LIMIT_X = BOUNDARY_X + 10.0f;
   const float DESPAWN_LIMIT_Y = BOUNDARY_Y + 10.0f; 
   
@@ -80,23 +80,21 @@ void update_ufo(Ufo *u,float delta){
 
   u->x += u->velocity * u->dx * delta;
   u->y += u->velocity * u->dy * delta;  
-  if (u->x > WRAP_X){ u->x = -WRAP_X;}
-  if (u->x < -WRAP_X){ u->x = WRAP_X;}
-  if (u->y > WRAP_Y){ u->y = -WRAP_Y;}
-  if (u->y < -WRAP_Y){ u->y = WRAP_Y;}
+  // if (u->x > WRAP_X){ u->x = -WRAP_X;}
+  // if (u->x < -WRAP_X){ u->x = WRAP_X;}
+  // if (u->y > WRAP_Y){ u->y = -WRAP_Y;}
+  // if (u->y < -WRAP_Y){ u->y = WRAP_Y;}
 }
 
 void draw_ufo(Ufo *u){
   if(!u->active){ return; }
 
   if (!isUfoLoaded) {
-      // COLOQUE O ARQUIVO 'ufo.obj' NA PASTA CORRETA
       if (ufoModel.load("models/Round_50s_Flying_Saucer_v1_L3.123cfa4a1570-edd0-4f74-8357-4d26f62cc3a1/10476_Round_50s_Flying_Saucer_v1_L3.obj")) {
           isUfoLoaded = true;
           ufoModel.overrideTexture(ufoTexture);
           printf("Modelo UFO carregado!\n");
       } else {
-          // Se falhar, avisa no console apenas uma vez para não spammar
           bool warned = false;
           if(!warned) { printf("Falha ao carregar ufo.obj, usando cubo.\n"); warned = true; }
       }
@@ -110,7 +108,6 @@ void draw_ufo(Ufo *u){
     if (isUfoLoaded) {
         float scale = u->size;
         glScalef(scale, scale, scale);
-
         glColor3f(1.0f, 1.0f, 1.0f); // Branco para não tingir a textura original do modelo
         ufoModel.draw();
     } else {
@@ -127,7 +124,7 @@ void spawn_ufo(Ufo *u,float &ufo_time, int points){
   if (!u->active){
     //tenta spwanar uma nave a cada 5 segundos
     if(ufo_time >= 5.0f){
-      const int SPAWN_CHANCE = 50;//6%
+      const int SPAWN_CHANCE = 90;//6%
       if(rand() % 100 < SPAWN_CHANCE){
         init_ufo(u,points);
       }
@@ -166,6 +163,7 @@ void ufo_shot(std::vector<Bullet> &ufo_proj, Ufo *u, Player *p){
   new_ufo_bullet.z = u->z;
   new_ufo_bullet.Vx = shot_dirx * BULLET_SPEED;
   new_ufo_bullet.Vy = shot_diry * BULLET_SPEED;
+  new_ufo_bullet.Vz = 0.0f;
 
   ufo_proj.push_back(new_ufo_bullet);
 }
@@ -189,7 +187,9 @@ void update_ufo_bullets(std::vector<Bullet> &ufo_proj,float delta){
 void draw_ufo_bullet(std::vector<Bullet> &ufo_proj){
   for (const auto& bullet : ufo_proj){
     glPushMatrix();
+    glPushAttrib(GL_ALL_ATTRIB_BITS);
       glDisable(GL_TEXTURE_2D);
+      glDisable(GL_LIGHTING);
       glColor3f(1.0f,0.0f,0.0f);
       glTranslated(bullet.x,bullet.y,bullet.z);
       glRotatef(90.0,-1.0,0.0,0.0);
@@ -197,7 +197,9 @@ void draw_ufo_bullet(std::vector<Bullet> &ufo_proj){
       glBegin(GL_POINTS);
       glVertex3f(0.0f,0.0f,0.0f);
       glEnd();
+      glEnable(GL_LIGHTING);
       glEnable(GL_TEXTURE_2D);
+    glPopAttrib();
     glPopMatrix();
   }
 }
