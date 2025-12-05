@@ -133,15 +133,24 @@ void splitMeteor(std::vector<Meteor>* meteors, Meteor parent) {
         Meteor smallM;
         smallM.active = true;
 
-        smallM.x = parent.x;
-        smallM.y = parent.y;
+        float angle = k * (2.0f * 3.14159f / 3.0f);
+        float offsetDist = parent.size * 0.8f;
+
+        smallM.x = parent.x + cosf(angle) * offsetDist;
+        smallM.y = parent.y + sinf(angle) * offsetDist;
         smallM.z = parent.z;
 
         smallM.size = parent.size * 0.5f;
+        float explosionForce = randRange(1.5f, 3.5f);
 
+<<<<<<< Updated upstream
         float spread = 5.0f;
         smallM.vx = parent.vx + randRange(-spread, spread);
         smallM.vy = parent.vy + randRange(-spread, spread);
+=======
+        smallM.vx = parent.vx + cosf(angle) * explosionForce;
+        smallM.vy = parent.vy + sinf(angle) * explosionForce;
+>>>>>>> Stashed changes
         smallM.vz = parent.vz + randRange(8.0f, 12.0f);
 
         smallM.rotation = randRange(0.0f, 360.0f);
