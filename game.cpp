@@ -228,7 +228,6 @@ void fps_counter(){
 void calculate_delta(){
   float curr_delta = glutGet(GLUT_ELAPSED_TIME);
   delta = (curr_delta - prev_delta)/1000.0f;
-  delta = 0.0033f; //limita o jogo a 300fps
   prev_delta = curr_delta;
 }
 
