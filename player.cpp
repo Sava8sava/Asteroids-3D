@@ -31,7 +31,7 @@ void init_player_var(Player *p){
     p->vx = 0.0f;
     p->vy = 0.0f;
     p->accel = 10.0f; 
-    p->damping_rate = 0.95f;
+    p->damping_rate = 0.97f;
     p->lives = PLAYER_LIVES;
 
     if (!shipLoaded) {
@@ -70,6 +70,7 @@ void draw_engine_exhaust(float size) {
         glTexCoord2f(1.0f, 0.0f); glVertex3f(0.0f, width, 0.0f);
         glTexCoord2f(0.5f, 1.0f); glVertex3f(0.0f, 0.0f, -fireLen);
     glEnd();
+    glBindTexture(GL_TEXTURE_2D,0);
     glColor3f(1.0, 1.0, 1.0); 
     glEnable(GL_LIGHTING);
 }
@@ -98,7 +99,7 @@ void draw_player(Player *p){
           }
       } else {
           // desenha a pirâmide se der errado
-          glColor3f(1.0, 0.0, 1.0);
+          glColor3f(1.0, 0.0, 0.0);
           draw_spaceship(p->size);
       }
   glPopMatrix();
