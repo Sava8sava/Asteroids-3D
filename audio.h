@@ -6,8 +6,6 @@ void close_audio();
 
 
 void play_bgm();
-void stop_boost();
-void update_boost_sound(bool is_moving);
 void play_player_shot();
 void play_player_death();
 void play_ufo_explosion();
