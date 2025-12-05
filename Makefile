@@ -1,7 +1,7 @@
 
 TARGET = Janela_jogo
 
-SRCS = main.cpp window.cpp game.cpp meteor.cpp player.cpp Ufo.cpp texture.cpp glm.cpp model.cpp particle.cpp star.cpp
+SRCS = main.cpp window.cpp game.cpp meteor.cpp player.cpp Ufo.cpp texture.cpp glm.cpp model.cpp particle.cpp star.cpp audio.cpp
 
 CC = g++ 
 CFLAGS = -Wall 
