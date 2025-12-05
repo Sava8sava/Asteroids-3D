@@ -3,6 +3,7 @@
 #include "player.h"
 #include "texture.h"
 #include "model.h"
+#include "audio.h"
 #include <GL/freeglut_std.h>
 #include <GL/gl.h>
 #include <vector>
@@ -196,6 +197,7 @@ void move_player(Player *p, float delta){
     if (up) {
       p->vx += frontal_dirx * accel_amount;
       p->vy += frontal_diry * accel_amount;
+      update_boost_sound(up);
     }
     if (rot_left){
       p->rotation += ANGULAR_VEL * delta;
@@ -260,6 +262,7 @@ void player_shot(std::vector<Bullet> &proj,Player *p){
   new_bullet.Vy = shot_diry * BULLET_SPEED;
 
   proj.push_back(new_bullet);
+  play_player_shot();
 }
 
 

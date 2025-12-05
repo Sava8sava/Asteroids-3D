@@ -7,6 +7,7 @@
 #include "window.h"
 #include "particle.h"
 #include "star.h"
+#include "audio.h"
 #include <GL/freeglut_std.h>
 #include <GL/gl.h>
 #include <stdlib.h>
@@ -17,7 +18,7 @@
 
 #define FIXED_TIMESTEP 0.01666f
 #define SPAWN_INTERVAL 120.0f 
-Gamestates current_state = GAME_OVER;
+Gamestates current_state = MENU;
 bool enter_key_pressed = false;
 
 Player player;
@@ -73,6 +74,7 @@ void check_collisions_Player_meteor(Player *p) {
 
         if (distSq < sumRadiiSq) {
             // barruou
+            play_player_death();
             spawn_explosion(p->x, p->y, p->z);
             reset_player(&player);
             respawnMeteor(&m);
@@ -267,7 +269,7 @@ void check_bullet_meteor_collisions() {
           if (distSq < sumRadiiSq) {
               bullet_hit = true;
               points += 100;
-
+              play_asteroid_explosion();
               spawn_explosion(m.x, m.y, m.z);
 
               Meteor hitMeteor = m;
@@ -320,6 +322,7 @@ void check_P_bullet_ufo_collisions(Ufo *u, int &points) {
           }else{
             points += 500;
           }
+          play_ufo_explosion();
           spawn_explosion(u->x, u->y, u->z);
           u->active = false;
           projectiles[i] = projectiles.back();
@@ -355,6 +358,7 @@ void check_U_bullet_player_collisions(Ufo *u, Player *p) {
         float sumRadiiSq = sumRadii * sumRadii;
 
         if (distSq < sumRadiiSq) {
+          play_player_death();
           spawn_explosion(p->x, p->y, p->z);
           reset_player(p);
           ufo_projectiles[i] = ufo_projectiles.back();
