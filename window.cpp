@@ -37,7 +37,7 @@ void init_opengl(void){
 
     playerTexture = loadTexture("Texturas/nave.jpg");
     meteorTexture = loadTexture("Texturas/meteoro.jpg");
-    propulsorTexture = loadTexture("Texturas/nave_propulsao.jpg");
+    propulsorTexture = loadTexture("Texturas/propulsao_nave.jpg");
     backTexture = loadTexture("Texturas/netespaco2.jpg");
     ufoTexture = loadTexture("Texturas/textura_ufo.jpg");
 

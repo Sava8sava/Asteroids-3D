@@ -170,7 +170,7 @@ void draw_background() {
         glDepthMask(GL_FALSE);
 
         glBindTexture(GL_TEXTURE_2D, backTexture);
-        glColor3f(1.0f, 1.0f, 1.0f);
+        glColor3f(0.75f, 0.75f, 0.75f);
 
         glTranslatef(0.0f, 0.0f, -50.0f);
 

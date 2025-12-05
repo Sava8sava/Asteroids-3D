@@ -55,6 +55,7 @@ void reset_player(Player *p){
 }
 
 void draw_engine_exhaust(float size) {
+  glDisable(GL_LIGHTING);
     glBindTexture(GL_TEXTURE_2D, propulsorTexture);
     float flicker = (rand() % 10) / 20.0f;
     float fireLen = size * (0.8f + flicker);
@@ -70,6 +71,7 @@ void draw_engine_exhaust(float size) {
         glTexCoord2f(0.5f, 1.0f); glVertex3f(0.0f, 0.0f, -fireLen);
     glEnd();
     glColor3f(1.0, 1.0, 1.0); 
+    glEnable(GL_LIGHTING);
 }
 
 void draw_player(Player *p){
