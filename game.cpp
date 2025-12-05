@@ -17,7 +17,7 @@
 
 #define FIXED_TIMESTEP 0.01666f
 #define SPAWN_INTERVAL 120.0f 
-Gamestates current_state = GAME_OVER;
+Gamestates current_state = MENU;
 bool enter_key_pressed = false;
 
 Player player;
@@ -53,32 +53,6 @@ void init_game_objs(){
     previous_time = glutGet(GLUT_ELAPSED_TIME);
 }
 
-void check_collisions_Player_meteor(Player *p) {
-    float playerRadius = p->size *0.8; 
-
-    for (size_t i = 0; i < meteors.size(); ++i) {
-        Meteor &m = meteors[i];
-        if (!m.active) continue;
-        float meteorRadius = m.size;
-
-        float deltaX = p->x - m.x;
-        float deltaY = p->y - m.y;
-        float deltaZ = p->z - m.z;
-
-        // (dist_A_B)^2 = (deltaX * deltaX) + (deltaY * deltaY)
-        float distSq = (deltaX * deltaX) + (deltaY * deltaY) + (deltaZ * deltaZ);
-
-        float sumRadii = playerRadius + meteorRadius;
-        float sumRadiiSq = sumRadii * sumRadii;
-
-        if (distSq < sumRadiiSq) {
-            // barruou
-            spawn_explosion(p->x, p->y, p->z);
-            reset_player(&player);
-            respawnMeteor(&m);
-        }
-    }
-}
 //refatorar 
 void update_game(void){
   switch (current_state) {
@@ -136,17 +110,24 @@ void update_game(void){
             player_shot(projectiles,&player);
             spacekey = false;
           }
-
+          
           update_bullets(projectiles,FIXED_TIMESTEP);
+          check_P_bullet_meteor_collisions();
+          check_collisions_Player_meteor(&player);
+          
+          if(Zorg.active){
+          check_Ufo_player_collisions(&Zorg,&player);
           update_ufo_bullets(ufo_projectiles,FIXED_TIMESTEP);
           check_P_bullet_ufo_collisions(&Zorg,points);
           check_U_bullet_player_collisions(&Zorg,&player);
-          check_bullet_meteor_collisions();
-          check_collisions_Player_meteor(&player);
+
+          }
+
           accum -= FIXED_TIMESTEP;
           }
           fps_counter();
           update_particles(delta);
+
       }else{
         printf("It's over, sobra nada para nave betinha");
         //glutLeaveMainLoop();
@@ -205,10 +186,10 @@ void draw_game(void){
 
       drawMeteors(&meteors);
       draw_player(&player);
+      draw_gui();
       draw_ufo(&Zorg);
       draw_bullet(projectiles);
       draw_ufo_bullet(ufo_projectiles);
-      draw_gui();
       draw_particles();
       break;
     case GAME_OVER:
@@ -243,7 +224,34 @@ void calculate_delta(){
   prev_delta = curr_delta;
 }
 
-void check_bullet_meteor_collisions() {
+void check_collisions_Player_meteor(Player *p) {
+    float playerRadius = p->size *0.8; 
+
+    for (size_t i = 0; i < meteors.size(); ++i) {
+        Meteor &m = meteors[i];
+        if (!m.active) continue;
+        float meteorRadius = m.size;
+
+        float deltaX = p->x - m.x;
+        float deltaY = p->y - m.y;
+        float deltaZ = p->z - m.z;
+
+        // (dist_A_B)^2 = (deltaX * deltaX) + (deltaY * deltaY)
+        float distSq = (deltaX * deltaX) + (deltaY * deltaY) + (deltaZ * deltaZ);
+
+        float sumRadii = playerRadius + meteorRadius;
+        float sumRadiiSq = sumRadii * sumRadii;
+
+        if (distSq < sumRadiiSq) {
+            // barruou
+            spawn_explosion(p->x, p->y, p->z);
+            reset_player(&player);
+            respawnMeteor(&m);
+        }
+    }
+}
+
+void check_P_bullet_meteor_collisions() {
   for (size_t i = 0; i < projectiles.size(); ) {
     Bullet &bullet = projectiles[i];
     bool bullet_hit = false;
@@ -253,9 +261,7 @@ void check_bullet_meteor_collisions() {
         Meteor &m = meteors[j];
         if (!m.active) continue; // Pula meteoros inativos
           float bulletRadius = 0.1f; 
-          float meteorRadius = m.size;
-          //TODO transformar as cordenadas numa struct separada
-          // e transforma distSq e sumRadii em funções   
+          float meteorRadius = m.size; 
           float deltaX = bullet.x - m.x;
           float deltaY = bullet.y - m.y;
          
@@ -293,9 +299,7 @@ void check_bullet_meteor_collisions() {
 }
 
 void check_P_bullet_ufo_collisions(Ufo *u, int &points) {
-  if(!u->active){
-    return;
-  }
+  
   float ufoRadius = u->size * 0.8f;
 
   for (size_t i = 0; i < projectiles.size(); ) {
@@ -332,11 +336,7 @@ void check_P_bullet_ufo_collisions(Ufo *u, int &points) {
 }
 
 void check_U_bullet_player_collisions(Ufo *u, Player *p) {
-  if(!u->active){
-    return;
-  }
-
-  float playerRadius = p->size * 0.5f;
+  float playerRadius = p->size * 0.8f;
 
   for (size_t i = 0; i < ufo_projectiles.size(); ) {
     Bullet &bullet = ufo_projectiles[i];      
@@ -365,6 +365,25 @@ void check_U_bullet_player_collisions(Ufo *u, Player *p) {
   }
 }
 
+void check_Ufo_player_collisions(Ufo *u, Player *p) {
+  
+  float playerRadius = p->size * 0.5f;
+  float ufo_radius = u->size * 0.8f;
+              
+  float deltaX = u->x - p->x;
+  float deltaY = u->y - p->y;
+       
+  float distSq = (deltaX * deltaX) + (deltaY * deltaY); 
+
+  float sumRadii = ufo_radius + playerRadius;
+  float sumRadiiSq = sumRadii * sumRadii;
+
+  if (distSq < sumRadiiSq) {
+    spawn_explosion(p->x, p->y, p->z);
+    reset_player(p);
+    
+  }
+}
 void reset_game(){
     points = 0;
     ufo_time = 0.0f;
@@ -381,7 +400,7 @@ void reset_game(){
 
 void draw_text(float x, float y, const char *string, float r, float g, float b) {
     glDisable(GL_LIGHTING);
-    glDisable(GL_COLOR_MATERIAL);
+    glDisable(GL_TEXTURE_2D);
     glColor3f(r,g,b);
     glPushMatrix();
         glTranslatef(x, y, -10.0f);
@@ -391,14 +410,14 @@ void draw_text(float x, float y, const char *string, float r, float g, float b) 
           glutStrokeCharacter(GLUT_STROKE_ROMAN, *c);
         }
     glPopMatrix();
-    glEnable(GL_COLOR_MATERIAL);
+    glEnable(GL_TEXTURE_2D);
     glEnable(GL_LIGHTING);
 }
 
 //TODO alguma coisa na função de desenhar o exaustor e na função de draw_background que tem dentro de game over e munu esta mudando a cor do texto
 void draw_menu() {
     draw_background();
-    draw_text(-7.0f, 2.5f, "ASTEROIDS CLONE", 1.0f, 0.0f, 1.0f);
+    draw_text(-6.0f, 2.5f, "ASTEROIDS CLONE", 1.0f, 0.0f, 1.0f);
     draw_text(-8.0f, -2.5f, "PRESS ENTER TO START", 1.0f,1.0f,1.0f);
 }
 
