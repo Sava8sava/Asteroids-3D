@@ -92,9 +92,9 @@ void update_game(void){
     case PLAYING:
       if(is_player_alive(&player)){
         cont++;
-        if (cont % 9000 == 0) {
+        if (cont % 4500 == 0) {
             // progressão de dificuldade papai
-            int new_count = 1 + (points / 5000);
+            int new_count = 1 + (points / 1000);
             for(int i = 0; i < new_count; i++){
                 Meteor m;
                 respawnMeteor(&m); // Cria nas bordas
