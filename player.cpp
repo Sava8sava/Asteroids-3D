@@ -197,7 +197,6 @@ void move_player(Player *p, float delta){
     if (up) {
       p->vx += frontal_dirx * accel_amount;
       p->vy += frontal_diry * accel_amount;
-      update_boost_sound(up);
     }
     if (rot_left){
       p->rotation += ANGULAR_VEL * delta;

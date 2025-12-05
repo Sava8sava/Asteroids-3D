@@ -47,19 +47,6 @@ void play_bgm() {
     ma_sound_start(&music);
     }
 
-void update_boost_sound(bool is_moving) {
-    if (!audio_initialized) return;
-
-    if (is_moving) {
-        if (!ma_sound_is_playing(&boost_sound)) {
-            ma_sound_start(&boost_sound);
-        }
-    } else {
-        if (ma_sound_is_playing(&boost_sound)) {
-            ma_sound_stop(&boost_sound);
-        }
-    }
-}
 
 void play_player_shot() {
     if (!audio_initialized) return;
