@@ -15,7 +15,7 @@
 #include <vector> 
 #include <cstdlib>
 //BUG: os meteoros ja spawan muito proximo ao player ao começar o jogo 
-Gamestates current_state = MENU;
+Gamestates current_state = GAME_OVER;
 bool enter_key_pressed = false;
 
 Player player;
@@ -384,6 +384,7 @@ void draw_text(float x, float y, const char *string, float r, float g, float b) 
     glEnable(GL_LIGHTING);
 }
 
+//TODO alguma coisa na função de desenhar o exaustor e na função de draw_background que tem dentro de game over e munu esta mudando a cor do texto
 void draw_menu() {
     draw_background();
     draw_text(-7.0f, 2.5f, "ASTEROIDS CLONE", 1.0f, 0.0f, 1.0f);
@@ -391,12 +392,12 @@ void draw_menu() {
 }
 
 void draw_gameover() {
-    draw_background(); 
-    draw_text(-7.0f, 2.5f, "GAME OVER", 1.0f, 0.0f, 0.0f);
+    //draw_background(); 
+    draw_text(-4.0f, 2.5f, "GAME OVER", 1.0f, 0.0f, 0.0f);
     char score_text[50];
     sprintf(score_text, "FINAL SCORE: %d", points);
-    draw_text(-8.0f, -2.5f, score_text, 1.0f, 1.0f, 1.0f);
-    draw_text(-9.0f, -3.5f, "PRESS ENTER TO RESTART", 0.0f, 1.0f, 0.0f);
+    draw_text(-5.5f, -2.0f, score_text, 0.0f, 1.0f, 0.0f);
+    draw_text(-8.5f, -3.5f, "PRESS ENTER TO RESTART", 0.0f, 1.0f, 0.0f);
 }
 
 void draw_gui(){

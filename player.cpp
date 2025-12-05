@@ -11,7 +11,7 @@
 #define MAX_PROJECTILES 5
 #define MAX_PRJCT_DISTANCE 10.0f
 #define PLAYER_SIZE 0.5f
-#define PLAYER_LIVES 10 //o valor maximo é de um byte 
+#define PLAYER_LIVES 1 //o valor maximo é de um byte 
 
 bool up = 0;
 bool rot_left = 0;
