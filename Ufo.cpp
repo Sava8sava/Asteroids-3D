@@ -10,9 +10,9 @@
 
 const float BIG_UFO_VELOCITY = 3.0f;
 const float BIG_UFO_SIZE = 0.8f;
-const float LIL_UFO_VELOCIY = 7.0f; 
+const float LIL_UFO_VELOCIY = 6.0f; 
 const float LIL_UFO_SIZE = 0.3f;
-const float BULLET_SPEED = 7.0f;
+const float BULLET_SPEED = 4.0f;
 const float MAX_PRJCT_DISTANCE = 20.0f; 
 const int MAX_PROJECTILES = 5;
 
@@ -25,9 +25,9 @@ float _randRange(float min, float max) {
 }
 
 Ufos_types ufo_spawn_prob(int points){
-  // de 30k pra baixo apenas mini ufos aparecem 
+  // de 30k pra cima apenas LIL ufos aparecem 
   if (points < 30000){
-    const int LIL_PROB = 80;
+    const int LIL_PROB = 6;
     int roll = rand() % 100;
     if (roll < LIL_PROB){
       return LIL_UFO;
@@ -68,22 +68,16 @@ void init_ufo(Ufo *u, int points){
 }
 
 void update_ufo(Ufo *u,float delta){
-  // const float WRAP_X = BOUNDARY_X + 4.0f;
-  // const float WRAP_Y = BOUNDARY_Y + 4.0f;
-  const float DESPAWN_LIMIT_X = BOUNDARY_X + 10.0f;
-  const float DESPAWN_LIMIT_Y = BOUNDARY_Y + 10.0f; 
-  
-  if (fabs(u->x) > DESPAWN_LIMIT_X || fabs(u->y) > DESPAWN_LIMIT_Y) {
-      u->active = false;
-      return;
-  }
-
+  const float WRAP_X = BOUNDARY_X + 4.0f;
+  const float WRAP_Y = BOUNDARY_Y + 4.0f;
+ 
   u->x += u->velocity * u->dx * delta;
   u->y += u->velocity * u->dy * delta;  
-  // if (u->x > WRAP_X){ u->x = -WRAP_X;}
-  // if (u->x < -WRAP_X){ u->x = WRAP_X;}
-  // if (u->y > WRAP_Y){ u->y = -WRAP_Y;}
-  // if (u->y < -WRAP_Y){ u->y = WRAP_Y;}
+  
+  if (u->x > WRAP_X){ u->x = -WRAP_X;}
+  if (u->x < -WRAP_X){ u->x = WRAP_X;}
+  if (u->y > WRAP_Y){ u->y = -WRAP_Y;}
+  if (u->y < -WRAP_Y){ u->y = WRAP_Y;}
 }
 
 void draw_ufo(Ufo *u){

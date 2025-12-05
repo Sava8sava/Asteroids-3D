@@ -32,7 +32,7 @@ void respawnMeteor(Meteor* m){
         m->x = randRange(-BOUNDARY_X, BOUNDARY_X);
     }
     m->z = 0.0f;
-    float speed = randRange(1.0f, 4.0f);
+    float speed = randRange(0.3f, 2.0f);
     m->vx = (m->x > 0) ? randRange(-speed, -0.5f) : randRange(0.5f, speed);
     m->vy = (m->y > 0) ? randRange(-speed, -0.5f) : randRange(0.5f, speed);
     m->vz = 0.0f;
@@ -139,7 +139,7 @@ void splitMeteor(std::vector<Meteor>* meteors, Meteor parent) {
 
         smallM.size = parent.size * 0.5f;
 
-        float spread = 10.0f;
+        float spread = 5.0f;
         smallM.vx = parent.vx + randRange(-spread, spread);
         smallM.vy = parent.vy + randRange(-spread, spread);
         smallM.vz = parent.vz + randRange(8.0f, 12.0f);

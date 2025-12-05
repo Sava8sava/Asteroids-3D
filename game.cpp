@@ -14,7 +14,9 @@
 #include <math.h>
 #include <vector> 
 #include <cstdlib>
-//BUG: os meteoros ja spawan muito proximo ao player ao começar o jogo 
+
+#define FIXED_TIMESTEP 0.01666f
+#define SPAWN_INTERVAL 120.0f 
 Gamestates current_state = GAME_OVER;
 bool enter_key_pressed = false;
 
@@ -36,8 +38,9 @@ static float delta = 0.0f;
 static float previous_time = 0.0f;
 static float fps = 0.0f;
 static int points = 0;
-
+static float accum = 0.0f;
 static float ufo_time = 0.0f;
+static float spawm_timer = 0.0f;
 
 //partículas de explosão
 std::vector<Particle> particles;
@@ -76,8 +79,6 @@ void check_collisions_Player_meteor(Player *p) {
         }
     }
 }
-int cont = 0;
-
 //refatorar 
 void update_game(void){
   switch (current_state) {
@@ -91,9 +92,21 @@ void update_game(void){
 
     case PLAYING:
       if(is_player_alive(&player)){
-        cont++;
-        if (cont % 4500 == 0) {
-            // progressão de dificuldade papai
+        calculate_delta();
+        accum += delta;
+        if (accum > 0.2f){
+          accum = 0.2f;
+        }
+
+        while(accum >= FIXED_TIMESTEP){
+          
+          spawm_timer += FIXED_TIMESTEP;
+          //progressão de dificuldade em relação os pontos 
+          float curr_interval = SPAWN_INTERVAL - (points/500.0f);
+          if(curr_interval < 10.0f)curr_interval = 10.0f;
+
+          if (spawm_timer >= curr_interval) {
+            spawm_timer = 0.0f;
             int new_count = 1 + (points / 1000);
             for(int i = 0; i < new_count; i++){
                 Meteor m;
@@ -102,39 +115,38 @@ void update_game(void){
             }
         }
 
-        calculate_delta();
-        move_player(&player,delta);
-        update_starfield(delta, player.vx, player.vy);
-        updateMeteors(&meteors, delta);
-        update_particles(delta);
+          move_player(&player,FIXED_TIMESTEP);
+          update_starfield(FIXED_TIMESTEP, player.vx, player.vy);
+          updateMeteors(&meteors, FIXED_TIMESTEP);
 
-        ufo_time += delta;
-        spawn_ufo(&Zorg,ufo_time,points);
+          ufo_time += FIXED_TIMESTEP;
+          spawn_ufo(&Zorg,ufo_time,points);
 
-        if(Zorg.active){
-          //printf("zorg ativo");
-          update_ufo(&Zorg,delta);
-          Zorg.shoot_timer += delta;
-          if(Zorg.shoot_timer >= Zorg.shoot_interval){
-            ufo_shot(ufo_projectiles,&Zorg,&player);
-            Zorg.shoot_timer = 0.0f;
+          if(Zorg.active){
+            //printf("zorg ativo");
+            update_ufo(&Zorg,FIXED_TIMESTEP);
+            Zorg.shoot_timer += FIXED_TIMESTEP;
+            if(Zorg.shoot_timer >= Zorg.shoot_interval){
+              ufo_shot(ufo_projectiles,&Zorg,&player);
+              Zorg.shoot_timer = 0.0f;
+            }
           }
-        }
-         
-        if(spacekey){
-          player_shot(projectiles,&player);
-          spacekey = false;
-        }
+           
+          if(spacekey){
+            player_shot(projectiles,&player);
+            spacekey = false;
+          }
 
-        update_bullets(projectiles,delta);
-        update_ufo_bullets(ufo_projectiles,delta);
-        check_P_bullet_ufo_collisions(&Zorg,points);
-        check_U_bullet_player_collisions(&Zorg,&player);
-        check_bullet_meteor_collisions();
-        check_collisions_Player_meteor(&player);
-        
-        
-        fps_counter();
+          update_bullets(projectiles,FIXED_TIMESTEP);
+          update_ufo_bullets(ufo_projectiles,FIXED_TIMESTEP);
+          check_P_bullet_ufo_collisions(&Zorg,points);
+          check_U_bullet_player_collisions(&Zorg,&player);
+          check_bullet_meteor_collisions();
+          check_collisions_Player_meteor(&player);
+          accum -= FIXED_TIMESTEP;
+          }
+          fps_counter();
+          update_particles(delta);
       }else{
         printf("It's over, sobra nada para nave betinha");
         //glutLeaveMainLoop();
@@ -356,7 +368,7 @@ void check_U_bullet_player_collisions(Ufo *u, Player *p) {
 void reset_game(){
     points = 0;
     ufo_time = 0.0f;
-    cont = 0; 
+    spawm_timer = 0.0f; 
     // Limpa os vetores de objetos
     meteors.clear();
     projectiles.clear();
