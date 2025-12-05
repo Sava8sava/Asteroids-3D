@@ -7,6 +7,7 @@
 #include "window.h"
 #include "particle.h"
 #include "star.h"
+#include "audio.h"
 #include <GL/freeglut_std.h>
 #include <GL/gl.h>
 #include <stdlib.h>
@@ -273,7 +274,7 @@ void check_P_bullet_meteor_collisions() {
           if (distSq < sumRadiiSq) {
               bullet_hit = true;
               points += 100;
-
+              play_asteroid_explosion();
               spawn_explosion(m.x, m.y, m.z);
 
               Meteor hitMeteor = m;
@@ -324,6 +325,7 @@ void check_P_bullet_ufo_collisions(Ufo *u, int &points) {
           }else{
             points += 500;
           }
+          play_ufo_explosion();
           spawn_explosion(u->x, u->y, u->z);
           u->active = false;
           projectiles[i] = projectiles.back();
@@ -355,6 +357,7 @@ void check_U_bullet_player_collisions(Ufo *u, Player *p) {
         float sumRadiiSq = sumRadii * sumRadii;
 
         if (distSq < sumRadiiSq) {
+          play_player_death();
           spawn_explosion(p->x, p->y, p->z);
           reset_player(p);
           ufo_projectiles[i] = ufo_projectiles.back();

@@ -3,6 +3,7 @@
 #include "player.h"
 #include "texture.h"
 #include "model.h"
+#include "audio.h"
 #include <GL/freeglut_std.h>
 #include <GL/gl.h>
 #include <vector>
@@ -261,6 +262,7 @@ void player_shot(std::vector<Bullet> &proj,Player *p){
   new_bullet.Vy = shot_diry * BULLET_SPEED;
 
   proj.push_back(new_bullet);
+  play_player_shot();
 }
 
 

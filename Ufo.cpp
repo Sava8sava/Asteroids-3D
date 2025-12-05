@@ -5,6 +5,7 @@
 #include "types.h"
 #include "model.h"
 #include "texture.h"
+#include "audio.h"
 #include <GL/freeglut_std.h>
 #include <GL/gl.h>
 
@@ -88,6 +89,7 @@ void draw_ufo(Ufo *u){
           isUfoLoaded = true;
           ufoModel.overrideTexture(ufoTexture);
           printf("Modelo UFO carregado!\n");
+          play_ufo_spawn();
       } else {
           bool warned = false;
           if(!warned) { printf("Falha ao carregar ufo.obj, usando cubo.\n"); warned = true; }
@@ -160,6 +162,7 @@ void ufo_shot(std::vector<Bullet> &ufo_proj, Ufo *u, Player *p){
   new_ufo_bullet.Vz = 0.0f;
 
   ufo_proj.push_back(new_ufo_bullet);
+  play_ufo_shot();
 }
 
 void update_ufo_bullets(std::vector<Bullet> &ufo_proj,float delta){
