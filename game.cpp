@@ -17,7 +17,7 @@
 #include <cstdlib>
 
 #define FIXED_TIMESTEP 0.01666f
-#define SPAWN_INTERVAL 120.0f 
+#define SPAWN_INTERVAL 80.0f 
 Gamestates current_state = MENU;
 bool enter_key_pressed = false;
 
@@ -420,7 +420,7 @@ void draw_text(float x, float y, const char *string, float r, float g, float b) 
 //TODO alguma coisa na função de desenhar o exaustor e na função de draw_background que tem dentro de game over e munu esta mudando a cor do texto
 void draw_menu() {
     draw_background();
-    draw_text(-6.0f, 2.5f, "ASTEROIDS CLONE", 1.0f, 0.0f, 1.0f);
+    draw_text(-6.0f, 2.5f, "ASTEROIDS 3D", 1.0f, 0.0f, 1.0f);
     draw_text(-8.0f, -2.5f, "PRESS ENTER TO START", 1.0f,1.0f,1.0f);
 }
 
