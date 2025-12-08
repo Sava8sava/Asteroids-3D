@@ -14,8 +14,9 @@ MACOS_LIBS = -framework GLUT -framework OpenGL
 MINGW_LIBS = -lfreeglut -lglew32 -lglu32 -lopengl32 -lwinmm -lgdi32
 
 #Modifique essa função com base no seu sistema 
-LIBS = $(MINGW_LIBS)
-#  LIBS = $(LINUX_LIBS)
+# LIBS = $(MINGW_LIBS)
+# LIBS = $(LINUX_LIBS)
+LIBS = $(MACOS_LIBS)
 
 all: $(TARGET)
 
