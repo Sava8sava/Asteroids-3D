@@ -120,7 +120,7 @@ void spawn_ufo(Ufo *u,float &ufo_time, int points){
   if (!u->active){
     //tenta spwanar uma nave a cada 5 segundos
     if(ufo_time >= 5.0f){
-      const int SPAWN_CHANCE = 90;//6%
+      const int SPAWN_CHANCE = 70;
       if(rand() % 100 < SPAWN_CHANCE){
         init_ufo(u,points);
       }

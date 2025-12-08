@@ -115,10 +115,10 @@ void update_game(void){
           update_bullets(projectiles,FIXED_TIMESTEP);
           check_P_bullet_meteor_collisions();
           check_collisions_Player_meteor(&player);
+          update_ufo_bullets(ufo_projectiles,FIXED_TIMESTEP);
           
           if(Zorg.active){
           check_Ufo_player_collisions(&Zorg,&player);
-          update_ufo_bullets(ufo_projectiles,FIXED_TIMESTEP);
           check_P_bullet_ufo_collisions(&Zorg,points);
           check_U_bullet_player_collisions(&Zorg,&player);
 
@@ -420,7 +420,7 @@ void draw_text(float x, float y, const char *string, float r, float g, float b) 
 //TODO alguma coisa na função de desenhar o exaustor e na função de draw_background que tem dentro de game over e munu esta mudando a cor do texto
 void draw_menu() {
     draw_background();
-    draw_text(-6.0f, 2.5f, "ASTEROIDS 3D", 1.0f, 0.0f, 1.0f);
+    draw_text(-5.0f, 2.5f, "ASTEROIDS 3D", 1.0f, 0.0f, 1.0f);
     draw_text(-8.0f, -2.5f, "PRESS ENTER TO START", 1.0f,1.0f,1.0f);
 }
 

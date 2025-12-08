@@ -8,7 +8,7 @@
 #include <GL/gl.h>
 #include <vector>
 
-#define BULLET_SPEED 5.0f
+#define BULLET_SPEED 7.0f
 #define MAX_PROJECTILES 5
 #define MAX_PRJCT_DISTANCE 10.0f
 #define PLAYER_SIZE 0.5f
