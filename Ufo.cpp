@@ -69,8 +69,8 @@ void init_ufo(Ufo *u, int points){
 }
 
 void update_ufo(Ufo *u,float delta){
-  const float WRAP_X = BOUNDARY_X + 4.0f;
-  const float WRAP_Y = BOUNDARY_Y + 4.0f;
+  const float WRAP_X = BOUNDARY_X + 2.0f;
+  const float WRAP_Y = BOUNDARY_Y + 2.0f;
  
   u->x += u->velocity * u->dx * delta;
   u->y += u->velocity * u->dy * delta;  

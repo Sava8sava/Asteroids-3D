@@ -370,7 +370,7 @@ void check_U_bullet_player_collisions(Ufo *u, Player *p) {
 
 void check_Ufo_player_collisions(Ufo *u, Player *p) {
   
-  float playerRadius = p->size * 0.5f;
+  float playerRadius = p->size * 0.75f;
   float ufo_radius = u->size * 0.8f;
               
   float deltaX = u->x - p->x;
@@ -384,6 +384,7 @@ void check_Ufo_player_collisions(Ufo *u, Player *p) {
   if (distSq < sumRadiiSq) {
     spawn_explosion(p->x, p->y, p->z);
     reset_player(p);
+    play_player_death();
     
   }
 }
