@@ -12,6 +12,7 @@
     #include <GL/freeglut.h>
     #include <GL/freeglut_std.h>
 #endif
+
 typedef struct{
   float x,y,z;
   float dx,dy;
@@ -33,7 +34,8 @@ typedef struct{
     float vx,vy;
     float accel; 
     float damping_rate;
-    int8_t lives; //inteiro de um byte
+    int8_t lives;//inteiro de um byte
+    float invencibility_timer;
 } Player; 
 
 typedef struct{

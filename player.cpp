@@ -34,6 +34,7 @@ void init_player_var(Player *p){
     p->accel = 10.0f; 
     p->damping_rate = 0.97f;
     p->lives = PLAYER_LIVES;
+    p->invencibility_timer = 2.0f;
 
     if (!shipLoaded) {
         if (playerShip.load("models/Spaceship/13886_UFO_V1_l2.obj")) {
@@ -53,6 +54,7 @@ void reset_player(Player *p){
     p->vx = 0.0f;
     p->vy = 0.0f;
     p->lives -= 1;
+    p->invencibility_timer = 2.0f;
 }
 
 void draw_engine_exhaust(float size) {
@@ -80,31 +82,38 @@ void draw_player(Player *p){
   glPushMatrix();
       glTranslated(p->x,p->y,p->z);
       glRotatef(p->rotation,0.0,0.0,1.0);
-      // glRotatef(90.0,-1.0,0.0,0.0);
-      // glColor3f(1.0,0.0,1.0);
-      // draw_spaceship(p->size);
       glRotatef(-p->bank_angle, 0.0, 1.0, 0.0);
-      if (shipLoaded) {
+      bool is_Invencible_Actv = false;
+      
+      if (p-> invencibility_timer > 0.0f){
+        //frequencia do efeito de psicada
+        if(fmodf(p-> invencibility_timer,0.2f) < 0.1f){
+          is_Invencible_Actv = true;
+        }
+  }
+      if (shipLoaded && !is_Invencible_Actv) {
               glPushMatrix();
                 // se tiver virado errado, só ajustar aqui
                 glRotatef(90.0, 0.0, 0.0, 1.0);
                 glRotatef(180.0, 0.0, 1.0, 0.0); // gira 180 graus se a nave tiver de costas
                 playerShip.draw();
               glPopMatrix();
-          if(up){
+      }
+          if(shipLoaded && up){
             glPushMatrix();
             glTranslatef(0.0f, -0.2f, 0.0f);
             glRotatef(-90.0, 1.0, 0.0, 0.0);
             draw_engine_exhaust(p->size);
             glPopMatrix();
-          }
-      } else {
+          
+          } else if(!shipLoaded) {
+            if(!is_Invencible_Actv){
           // desenha a pirâmide se der errado
           glColor3f(1.0, 0.0, 0.0);
           draw_spaceship(p->size);
-      }
+          }
+        }
   glPopMatrix();
-
 }
 
 void draw_spaceship(float size) {
@@ -189,6 +198,8 @@ void draw_spaceship(float size) {
 }
 
 void move_player(Player *p, float delta){
+
+    
     float accel_amount = p->accel * delta;
     float rotation_rad = p->rotation *(PI/180.0f);
 
@@ -211,6 +222,11 @@ void move_player(Player *p, float delta){
     
     p->x += p->vx * delta;
     p->y += p->vy * delta;
+
+    if(p->invencibility_timer > 0.0f){
+      p->invencibility_timer -= delta;
+      if(p->invencibility_timer < 0.0f){ p->invencibility_timer = 0.0f;}
+    }
 
     if (fabs(p->vx) < 0.001f) p->vx = 0.0f;
     if (fabs(p->vy) < 0.001f) p->vy = 0.0f;

@@ -226,6 +226,8 @@ void calculate_delta(){
 }
 
 void check_collisions_Player_meteor(Player *p) {
+    if(p->invencibility_timer > 0.0f){ return;}
+    
     float playerRadius = p->size *0.8; 
 
     for (size_t i = 0; i < meteors.size(); ++i) {
@@ -301,7 +303,7 @@ void check_P_bullet_meteor_collisions() {
 
 void check_P_bullet_ufo_collisions(Ufo *u, int &points) {
   
-  float ufoRadius = u->size * 0.8f;
+  float ufoRadius = u->size;
 
   for (size_t i = 0; i < projectiles.size(); ) {
     Bullet &bullet = projectiles[i];      
@@ -337,7 +339,9 @@ void check_P_bullet_ufo_collisions(Ufo *u, int &points) {
   }
 }
 
-void check_U_bullet_player_collisions(Ufo *u, Player *p) {
+void check_U_bullet_player_collisions(Ufo *u, Player *p) {  
+  
+  if(p->invencibility_timer > 0.0f){ return;}
   float playerRadius = p->size * 0.8f;
 
   for (size_t i = 0; i < ufo_projectiles.size(); ) {
@@ -369,6 +373,8 @@ void check_U_bullet_player_collisions(Ufo *u, Player *p) {
 }
 
 void check_Ufo_player_collisions(Ufo *u, Player *p) {
+   
+  if(p->invencibility_timer > 0.0f){ return;}
   
   float playerRadius = p->size * 0.75f;
   float ufo_radius = u->size * 0.8f;
