@@ -13,11 +13,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-#include <vector> 
+#include <vector>
 #include <cstdlib>
 
 #define FIXED_TIMESTEP 0.01666f
-#define SPAWN_INTERVAL 80.0f 
+#define SPAWN_INTERVAL 100.0f
 Gamestates current_state = MENU;
 bool enter_key_pressed = false;
 
@@ -54,7 +54,6 @@ void init_game_objs(){
     previous_time = glutGet(GLUT_ELAPSED_TIME);
 }
 
-//refatorar 
 void update_game(void){
   switch (current_state) {
     case MENU:
@@ -130,7 +129,7 @@ void update_game(void){
           update_particles(delta);
 
       }else{
-        printf("It's over, sobra nada para nave betinha");
+        printf("It's over");
         //glutLeaveMainLoop();
         current_state = GAME_OVER;
 

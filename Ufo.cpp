@@ -28,7 +28,7 @@ float _randRange(float min, float max) {
 Ufos_types ufo_spawn_prob(int points){
   // de 30k pra cima apenas LIL ufos aparecem 
   if (points < 30000){
-    const int LIL_PROB = 6;
+    const int LIL_PROB = 50;
     int roll = rand() % 100;
     if (roll < LIL_PROB){
       return LIL_UFO;
